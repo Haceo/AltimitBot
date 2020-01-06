@@ -1,0 +1,35 @@
+﻿<Window x:Class="AltimitBot2._0.ServerList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AltimitBot2._0"
+        mc:Ignorable="d"
+        Title="Server List" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Loaded="WPF_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Name="serverList" Grid.Row="0" Grid.ColumnSpan="99" Height="300" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Server Name" Width="200" DisplayMemberBinding="{Binding ServerName}"/>
+                    <GridViewColumn Header="Server ID" Width="200" DisplayMemberBinding="{Binding ServerId}"/>
+                    <GridViewColumn Header="Verification Channel" Width="125" DisplayMemberBinding="{Binding dobChannel}"/>
+                    <GridViewColumn Header="Verification Role" Width="125" DisplayMemberBinding="{Binding dobRole}"/>
+                    <GridViewColumn Header="Bot Channel" Width="125" DisplayMemberBinding="{Binding botChannel}"/>
+                    <GridViewColumn Header="Bot Override Role" Width="125" DisplayMemberBinding="{Binding botRole}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Content="Manage Server" Width="100" Height="25" Grid.Row="1" Grid.Column="0" Margin="10" ToolTip="Manage server users" Click="Manage_Click"/>
+        <Button Content="Server Serttings" Width="100" Height="25" Grid.Row="1" Grid.Column="1" Margin="10" ToolTip="Edit server options" Click="Edit_Click"/>
+        <Button Content="Close" Width="100" Height="25" Grid.Row="1" Grid.Column="2" Margin="200,10,10,10" Click="Close_Click"/>
+    </Grid>
+</Window>

@@ -1,0 +1,57 @@
+﻿<Window x:Class="AltimitBot2._0.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AltimitBot2._0"
+        mc:Ignorable="d"
+        Title="Altimit BOT v2.0" Height="450" Width="800" ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Height="20">
+            <MenuItem Header="File">
+                <MenuItem Header="Connect" Click="Connect_Click"/>
+                <Separator/>
+                <MenuItem Header="Server List" Click="ServerManager_Click"/>
+                <Separator/>
+                <MenuItem Header="Save">
+                    <MenuItem Header="Server Data" Click="Server_Save"/>
+                    <MenuItem Header="User Data" Click="User_Save"/>
+                    <MenuItem Header="All Data" Click="All_Save"/>
+                </MenuItem>
+                <MenuItem Header="Load">
+                    <MenuItem Header="Server Data" Click="Server_Load"/>
+                    <MenuItem Header="User Data" Click="User_Load"/>
+                    <MenuItem Header="All Data" Click="All_Load"/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Settings" Click="Settings_Click"/>
+                <Separator/>
+                <MenuItem Header="Close" Click="Close_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help" Visibility="Collapsed">
+                <MenuItem Header="About"/>
+                <MenuItem Header="Check for updates"/>
+                <MenuItem Header="Manual"/>
+            </MenuItem>
+        </Menu>
+        <GroupBox Header="Console" Grid.Row="1" Grid.Column="0" Margin="3">
+            <TextBox Name="consoleOutputBox" Margin="3" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" Text="{Binding Path=ConsoleString}"/>
+        </GroupBox>
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="99">
+            <StatusBarItem Content="Connected:"/>
+            <Ellipse Name="connectionLight" Fill="Red" Height="10" Width="10"/>
+            <Separator Name="serverSep" Width="1" Visibility="Hidden"/>
+            <StatusBarItem Name="serverLabel" Content="Servers: " Visibility="Hidden"/>
+            <StatusBarItem Name="serverCount" Content="{Binding ServerCount}" Visibility="Hidden"/>
+        </StatusBar>
+    </Grid>
+</Window>
