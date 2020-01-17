@@ -39,7 +39,7 @@ namespace AltimitBot2._0.Modules
             await MainWindow._client.SetGameAsync(statusMsg, type: (ActivityType)type);
             await Misc.EmbedWriter(Context.Channel, Context.User,
                 "Change Status",
-                "Set BOT status to " + (ActivityType)type + statusMsg,
+                "Set BOT status to " + (ActivityType)type + " " + statusMsg,
                 time: 10000);
         }
 
@@ -79,5 +79,85 @@ namespace AltimitBot2._0.Modules
             }
             BotConfig.SaveServerData();
         }
+        [Command("rolelist", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
+        public async Task rolelist([Remainder]string roles = "")
+        {
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            string outList = "";
+            if (roles == "")
+            {
+                listallroles();
+                return;
+            }
+            else
+            {
+                bool error = false;
+                string[] roleList = roles.Split(new char[] { ',', '|' }, StringSplitOptions.RemoveEmptyEntries);
+                if (roleList.Length == 1)
+                {
+                    singlerole(roles);
+                    return;
+                }
+                else
+                {
+                    foreach (var inputRole in roleList)
+                    {
+                        var role = Context.Guild.Roles.FirstOrDefault(x => x.Name == inputRole.Trim()) ?? null;
+                        if (role != null)
+                        {
+                            outList = outList + role.Name + ": " + role.Members.Count().ToString() + Environment.NewLine;
+                        }
+                        if (role == null)
+                        {
+                            outList = outList + inputRole + ": ERROR!" + Environment.NewLine;
+                            error = true;
+                        }
+                    }
+                    if (error)
+                    {
+                        outList = outList + Environment.NewLine + "Error! Some roles were not found or do not exist as written," + Environment.NewLine +
+                            "Please check spelling and case and try again!";
+                    }
+                }
+            }
+            await Misc.EmbedWriter(Context.Channel, Context.User,
+                "Role Counter",
+                "Roles found matching search parameters:" + Environment.NewLine +
+                outList);
+        }
+        public async Task listallroles()
+        {
+            string outList = "";
+            foreach (var role in Context.Guild.Roles)
+            {
+                outList = outList + role.Name + ": " + role.Members.Count().ToString() + Environment.NewLine;
+            }
+            await Misc.EmbedWriter(Context.Channel, Context.User,
+                "Role Counter",
+                "Listing all roles:" + Environment.NewLine +
+                outList);
+        }
+        public async Task singlerole(string role)
+        {
+            var foundRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == role);
+            if (foundRole == null)
+            {
+
+                await Misc.EmbedWriter(Context.Channel, Context.User,
+                    "Role Counter",
+                    "No role found matching " + role);
+                return;
+            }
+            await Misc.EmbedWriter(Context.Channel, Context.User,
+                "Role Counter",
+                "Role found matching search parameters:" + Environment.NewLine +
+                foundRole.Name + ": " + foundRole.Members.Count().ToString());
+        }
+    }
+    public class RoleObject
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
     }
 }

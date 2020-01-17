@@ -86,7 +86,8 @@ namespace AltimitBot2._0.Modules
                     "List self assignable roles.",
                     "Self assignable roles are:" + Environment.NewLine +
                     roleList + Environment.NewLine +
-                    "To claim a role type " + BotConfig.botConfig.cmdPrefix + "iam and then the role.");
+                    "To claim a role type " + BotConfig.botConfig.cmdPrefix + "iam and then the role.",
+                    time: -1);
             }
             else if (chan == null | chan == "")
             {
@@ -120,10 +121,10 @@ namespace AltimitBot2._0.Modules
             }
         }
         [Command("iam", RunMode = RunMode.Async)]
-        public async Task iam(string role)
+        public async Task iam([Remainder] string role)
         {
             await Context.Channel.DeleteMessageAsync(Context.Message);
-            string chan = BotConfig.serverData.FirstOrDefault(x => x.ServerId == Context.Guild.Id).botChannel;
+            string chan = BotConfig.serverData.FirstOrDefault(x => x.ServerId == Context.Guild.Id).botChannel ?? null;
             string botrole = BotConfig.serverData.FirstOrDefault(x => x.ServerId == Context.Guild.Id).botRole;
             var user = (Context.User as SocketGuildUser);
             var hasRole = (user as IGuildUser).Guild.Roles.FirstOrDefault(x => x.Name == botrole) ?? null;

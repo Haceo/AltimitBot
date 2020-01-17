@@ -44,12 +44,22 @@ namespace AltimitBot2._0
                 if (!res.IsSuccess && res.Error != CommandError.UnknownCommand)
                 {
                     consoleOut("Error!!: " + res.ErrorReason);
+                    return;
                 }
-                else if (dobchanList.Contains(msg.Channel.Name) | res.Error == CommandError.UnknownCommand)
+                if (!res.IsSuccess && res.Error == CommandError.UnknownCommand)
                 {
                     await msg.DeleteAsync();
                     consoleOut("Deleted message from user: " + context.User.Username + " within server: " + context.Guild.Name + " in channel: " + context.Channel.Name);
+                    consoleOut("Message: " + msg.Content);
+                    return;
                 }
+            }
+            else if (dobchanList.Contains(msg.Channel.Name) && !context.User.IsBot)
+            {
+                await msg.DeleteAsync();
+                consoleOut("Deleted message from user: " + context.User.Username + " within server: " + context.Guild.Name + " in channel: " + context.Channel.Name);
+                consoleOut("Message: " + msg.Content);
+                return;
             }
         }
 

@@ -18,24 +18,30 @@ namespace AltimitBot2._0.Modules
             if (message == null)
             {
                 await Context.Message.DeleteAsync();
+                CommandHandler.consoleOut("Deleted message from user: " + Context.User.Username + " within server: " + Context.Guild.Name + " in channel: " + Context.Channel.Name);
+                CommandHandler.consoleOut("Message: " + Context.Message.Content);
                 return;
             }
             if (message.Length > 10 | message.Contains(Environment.NewLine))
             {
                 await Context.Channel.DeleteMessageAsync(Context.Message);
+                CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Invalid");
+                CommandHandler.consoleOut("Message: " + Context.Message.Content);
                 await Misc.EmbedWriter(Context.Channel, Context.User,
                     "Error!",
                     "You have entered an invalid string, please try again and check your formatting...",
                     time: 10000);
                 return;
             }
-            string[] dob = message.Split(',');
+            string[] dob = message.Split(new char[] { ',', '/', '-', ' ' });
             int dobYear = int.Parse(dob[0].Trim());
             int dobMon = int.Parse(dob[1].Trim());
             int dobDay = int.Parse(dob[2].Trim());
 
             if (dobYear <= 1948 | dobYear >= DateTime.Now.Year)
             {
+                await Context.Message.DeleteAsync();
+                CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Bad year");
                 await Misc.EmbedWriter(Context.Channel, Context.User,
                     "Error!",
                     "You have entered an invalid year, if you believe this is a mistake please contact the server admins.",
@@ -44,6 +50,8 @@ namespace AltimitBot2._0.Modules
             }
             if (dobMon < 1 | dobMon > 12)
             {
+                await Context.Message.DeleteAsync();
+                CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Bad month");
                 await Misc.EmbedWriter(Context.Channel, Context.User,
                     "Error!",
                     "You have entered an invalid month, please check your formatting and try again.",
@@ -52,6 +60,8 @@ namespace AltimitBot2._0.Modules
             }
             if (dobDay < 1 | dobDay > 31)
             {
+                await Context.Message.DeleteAsync();
+                CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Bad day");
                 await Misc.EmbedWriter(Context.Channel, Context.User,
                     "Error!",
                     "You have entered an invalid day, please check your formatting and try again.",
@@ -62,6 +72,7 @@ namespace AltimitBot2._0.Modules
             if (uid != null)
             {
                 await Context.Channel.DeleteMessageAsync(Context.Message);
+                CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Double Entry");
                 await Misc.EmbedWriter(Context.Channel, Context.User,
                     "Error!",
                     "You have already requested access to " + Context.Guild.Name + ": " + Context.Channel + Environment.NewLine +
@@ -102,6 +113,7 @@ namespace AltimitBot2._0.Modules
                     if (age < 18)
                     {
                         addinfo.Status = userStatus.Underage;
+                        CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Underage");
                         await Misc.EmbedWriter(Context.Channel, Context.User, 
                             "Not Approved!",
                             "Sorry but you are underage and cannot access " + Context.Guild.Name + ": " + Context.Channel.Name + "." + Environment.NewLine +
@@ -111,6 +123,7 @@ namespace AltimitBot2._0.Modules
                     else if (age > 60)
                     {
                         addinfo.Status = userStatus.Overage;
+                        CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Overage");
                         await Misc.EmbedWriter(Context.Channel, Context.User,
                             "Not Approved!",
                             "Sorry but you have entered an age that exceeds this bots limits," + Environment.NewLine +
@@ -122,6 +135,7 @@ namespace AltimitBot2._0.Modules
                 {
                     addinfo.Flagged = true;
                     addinfo.Status = userStatus.Close;
+                    CommandHandler.consoleOut("User: " + Context.User + " Server: " + Context.Guild.Name + " Channel: " + Context.Channel.Name + " Error: Close");
                     await Misc.EmbedWriter(Context.Channel, Context.User,
                         "Approved with warning!",
                         "Sorry but youre birthday is close to todays date," + Environment.NewLine + 
@@ -187,11 +201,11 @@ namespace AltimitBot2._0.Modules
                 "The channel #" + Context.Channel + " is now being monitored for age verification purposes!" + Environment.NewLine +
                 Environment.NewLine +
                 "Please submit your date of birth to this channel in the format:" + Environment.NewLine +
-                "$dob YYYY,MM,DD" + Environment.NewLine +
+                "``$dob YYYY,MM,DD``" + Environment.NewLine +
                 Environment.NewLine +
                 "Example:" + Environment.NewLine +
-                "$dob 2000,01,01" + Environment.NewLine +
-                "$dob 2000,1,1" + Environment.NewLine +
+                "``$dob 2000,01,01``" + Environment.NewLine +
+                "``$dob 2000,1,1``" + Environment.NewLine +
                 Environment.NewLine +
                 "All other input will be deleted and ignored! This includes failed attempts!" + Environment.NewLine +
                 "Providing false or misleading information will result in a ban!!",
