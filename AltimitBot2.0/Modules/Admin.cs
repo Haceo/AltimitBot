@@ -33,8 +33,13 @@ namespace AltimitBot2._0.Modules
 
         [Command("status", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task status(int type, [Remainder]string statusMsg = "")
+        public async Task status(int type = -1, [Remainder]string statusMsg = "")
         {
+            if (type == -1)
+            {
+                await MainWindow._client.SetGameAsync("");
+                return;
+            }
             await Context.Channel.DeleteMessageAsync(Context.Message);
             await MainWindow._client.SetGameAsync(statusMsg, type: (ActivityType)type);
             await Misc.EmbedWriter(Context.Channel, Context.User,
