@@ -319,6 +319,9 @@
     <Content Include="opus.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="youtube-dl.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="KiteDH2.ico" />
   </ItemGroup>
   <ItemGroup />
