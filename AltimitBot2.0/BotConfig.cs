@@ -15,12 +15,14 @@ namespace AltimitBot2._0
         public static MainWindow _this;
         private const string confFolder = "Resources";
         private const string confFile = "botconf.json";
+        private const string playlistFile = "/playlist.json";
         public static BotConf botConfig;
 
         private const string serverFolder = "ServerData";
         public static ObservableCollection<ServerInfo> serverData = new ObservableCollection<ServerInfo>();
         public static ObservableCollection<UserInfo> userData = new ObservableCollection<UserInfo>();
         public static ObservableCollection<ServerSAR> serverSar = new ObservableCollection<ServerSAR>();
+        public static ObservableCollection<Tracks> playList = new ObservableCollection<Tracks>();
         public static void LoadConfig()
         {
             if (!Directory.Exists(confFolder))
@@ -159,6 +161,36 @@ namespace AltimitBot2._0
             File.WriteAllText(serverFolder + "/UserData.json", json);
             consoleOut("Saving complete!");
         }
+        public static void LoadPlaylist()
+        {
+            if (!Directory.Exists(serverFolder))
+            {
+                consoleOut("Folder not found! Creating folder /ServerData...");
+                Directory.CreateDirectory(serverFolder);
+            }
+            else
+            {
+                if (File.Exists(serverFolder + playlistFile))
+                {
+                    consoleOut("Playlist found!");
+                    string json = File.ReadAllText(serverFolder + playlistFile);
+                    playList = JsonConvert.DeserializeObject<ObservableCollection<Tracks>>(json);
+                }
+                else
+                {
+                    consoleOut("No Playlist found...");
+                }
+                consoleOut("Done loading playlist...");
+            }
+        }
+        public static void SavePlaylist()
+        {
+            consoleOut("Saving Playlist...");
+            string json = null;
+            json = JsonConvert.SerializeObject(playList, Formatting.Indented);
+            File.WriteAllText(serverFolder + playlistFile, json);
+            consoleOut("Saving playlist complete!");
+        }
         //VVV----copy to all modules----VVV
         public static void consoleOut(string msg)
         {
@@ -207,5 +239,12 @@ namespace AltimitBot2._0
         Overage,
         Close,
         Banned
+    }
+    public class Tracks
+    {
+        public string Title { get; set; }
+        public string Durration { get; set; }
+        public string Path { get; set; }
+        public ulong Server { get; set; }
     }
 }

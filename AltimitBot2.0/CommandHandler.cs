@@ -23,6 +23,7 @@ namespace AltimitBot2._0
             _client.MessageReceived += HandleCommandAsync;
             _client.UserJoined += JoinHandlerAsync;
             _client.JoinedGuild += JoinGuild;
+            _client.UserLeft += LeaveHandlerAsync;
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
@@ -81,7 +82,22 @@ namespace AltimitBot2._0
                 await u.AddRoleAsync(u.Guild.Roles.FirstOrDefault(x => x.Name == "Unverified"));
             }
         }
-
+        private Task LeaveHandlerAsync(SocketGuildUser u)
+        {
+            Task.Run(async () =>
+            {
+                await UserLeave(u);
+            });
+            return Task.CompletedTask;
+        }
+        private async Task UserLeave(SocketGuildUser u)
+        {
+            if (u == null)
+                return;
+            var server = u.Guild;
+            var channel = (server.Channels.FirstOrDefault(x => x.Name == "welcome") as ISocketMessageChannel);
+            await Modules.Misc.EmbedWriter(channel, u, "User left", u.Username + " has left the server", time: -1);
+        }
         private Task JoinGuild(SocketGuild g)
         {
             Task.Run(async () =>

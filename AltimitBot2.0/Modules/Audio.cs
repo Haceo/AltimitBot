@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace AltimitBot2._0.Modules
     {
         IAudioClient audioClient;
         private static readonly string DLPath = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
+        public ConcurrentQueue<Tracks> currentList;
         /*[Command("join", RunMode = RunMode.Async)]
         [RequireUserPermission(ChannelPermission.ManageChannels)]
         public async Task join(IVoiceChannel channel = null)
@@ -32,9 +34,42 @@ namespace AltimitBot2._0.Modules
             }
             audioClient = await channel.ConnectAsync();
         }*/
+        [Command("add", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task add(string url)
+        {
+            string file = "";
+            if (url.ToLower().Contains("youtube.com"))
+            {
+                try
+                {
+                    CommandHandler.consoleOut("GET " + url);
+                    file = await YoutubeDL(url);
+                    Tuple<string, string> info = await YoutubeInfo(url);
+                    string title;
+                    string duration;
+                    info.Deconstruct(out title, out duration);
+                    Tracks newTrack = new Tracks();
+                    newTrack.Title = title;
+                    newTrack.Durration = duration;
+                    newTrack.Path = file;
+                    newTrack.Server = Context.Guild.Id;
+                    BotConfig.playList.Add(newTrack);
+                    if (currentList == null)
+                        currentList = new ConcurrentQueue<Tracks>();
+                    currentList.Enqueue(newTrack);
+                    BotConfig.SavePlaylist();
+                    CommandHandler.consoleOut("DONE");
+                }
+                catch (Exception ex)
+                {
+                    CommandHandler.consoleOut(ex.ToString());
+                }
+            }
+        }
         [Command("play", RunMode = RunMode.Async)]
-        [RequireUserPermission(ChannelPermission.ManageChannels)]
-        public async Task play(string url, IVoiceChannel channel = null)
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task play(IVoiceChannel channel = null)
         {
             channel = channel ?? (Context.User as IGuildUser)?.VoiceChannel;
             if (channel == null)
@@ -44,19 +79,30 @@ namespace AltimitBot2._0.Modules
                     "User must be in a voice channel or a voice channel must be passed as an argument.");
                 return;
             }
-            channel = channel ?? (Context.User as IGuildUser)?.VoiceChannel;
             audioClient = await channel.ConnectAsync();
-            string file = "";
-            Tuple<string, string> info = null;
-            if (url.ToLower().Contains("youtube.com"))
+            if (currentList == null)
+                currentList = new ConcurrentQueue<Tracks>();
+            foreach (var track in BotConfig.playList.Where(x => x.Server == Context.Guild.Id))
             {
-                file = await YoutubeDL(url);
-                //info = await YoutubeInfo(url);
+                currentList.Enqueue(track);
             }
-            /*string title = "";
-            string duration = "";
-            info.Deconstruct(out title, out duration);*/
-            await SendAsync(file);
+            try
+            {
+                while (currentList.TryDequeue(out var track))
+                {
+                    CommandHandler.consoleOut("Playing" + track.Title);
+                    await SendAsync(track.Path);
+                    File.Delete(track.Path);
+                    BotConfig.playList.Remove(BotConfig.playList.FirstOrDefault(x => x.Path == track.Path && x.Server == Context.Guild.Id));
+                    BotConfig.SavePlaylist();
+                    await Task.Delay(4000);
+                }
+            }
+            catch (Exception ex)
+            {
+                CommandHandler.consoleOut(ex.ToString());
+            }
+            await channel.DisconnectAsync();
         }
         private async Task SendAsync(string path)
         {
@@ -66,7 +112,6 @@ namespace AltimitBot2._0.Modules
             {
                 await output.CopyToAsync(discord);
                 await discord.FlushAsync();
-                File.Delete(path);
             }
         }
         private Process CreateStream(string path)
