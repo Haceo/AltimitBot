@@ -19,7 +19,7 @@ namespace AltimitBot2._0.Modules
     {
         IAudioClient audioClient;
         private static readonly string DLPath = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
-        public ConcurrentQueue<Tracks> currentList;
+        public ConcurrentQueue<Tracks> currentList = new ConcurrentQueue<Tracks>();
         /*[Command("join", RunMode = RunMode.Async)]
         [RequireUserPermission(ChannelPermission.ManageChannels)]
         public async Task join(IVoiceChannel channel = null)
@@ -55,8 +55,6 @@ namespace AltimitBot2._0.Modules
                     newTrack.Path = file;
                     newTrack.Server = Context.Guild.Id;
                     BotConfig.playList.Add(newTrack);
-                    if (currentList == null)
-                        currentList = new ConcurrentQueue<Tracks>();
                     currentList.Enqueue(newTrack);
                     BotConfig.SavePlaylist();
                     CommandHandler.consoleOut("DONE");
@@ -80,8 +78,6 @@ namespace AltimitBot2._0.Modules
                 return;
             }
             audioClient = await channel.ConnectAsync();
-            if (currentList == null)
-                currentList = new ConcurrentQueue<Tracks>();
             foreach (var track in BotConfig.playList.Where(x => x.Server == Context.Guild.Id))
             {
                 currentList.Enqueue(track);
