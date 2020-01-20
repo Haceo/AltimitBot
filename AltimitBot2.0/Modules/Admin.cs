@@ -159,6 +159,38 @@ namespace AltimitBot2._0.Modules
                 "Role found matching search parameters:" + Environment.NewLine +
                 foundRole.Name + ": " + foundRole.Members.Count().ToString());
         }
+        [Command("rolemembers", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
+        public async Task rolemembers(string inputRole, int time = 30000)
+        {
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var members = Context.Guild.Roles.FirstOrDefault(x => x.Name == inputRole).Members ?? null;
+            if (members == null)
+            {
+                await Misc.EmbedWriter(Context.Channel, Context.User,
+                    "Error!",
+                    "The role " + inputRole + " was not found or does not exist as typed, please try again.");
+                return;
+            }
+            string memberList = "";
+            foreach (var member in members)
+            {
+                memberList = memberList + member.Username + Environment.NewLine;
+            }
+            if (memberList == "")
+            {
+                await Misc.EmbedWriter(Context.Channel, Context.User,
+                    "Role Members:",
+                    "The role " + inputRole + " contains zero members.");
+                return;
+            }
+            await Misc.EmbedWriter(Context.Channel, Context.User,
+                "Role Members:",
+                "Role: " + inputRole + Environment.NewLine +
+                "Returned members:" + Environment.NewLine +
+                Environment.NewLine +
+                memberList, time: time);
+        }
     }
     public class RoleObject
     {
