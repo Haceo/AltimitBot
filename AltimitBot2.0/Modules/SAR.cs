@@ -77,7 +77,7 @@ namespace AltimitBot2._0.Modules
             {
                 int i = 0;
                 string roleList = "";
-                foreach (var role in BotConfig.serverSar)
+                foreach (var role in BotConfig.serverSar.Where(x => x.ServerId == Context.Guild.Id))
                 {
                     i++;
                     roleList = roleList + Environment.NewLine + i + ". " + role.Role;
@@ -93,7 +93,7 @@ namespace AltimitBot2._0.Modules
             {
                 int i = 0;
                 string roleList = "";
-                foreach (var role in BotConfig.serverSar)
+                foreach (var role in BotConfig.serverSar.Where(x => x.ServerId == Context.Guild.Id))
                 {
                     i++;
                     roleList = roleList + Environment.NewLine + i + ". " + role.Role;
@@ -108,7 +108,7 @@ namespace AltimitBot2._0.Modules
             {
                 int i = 0;
                 string roleList = "";
-                foreach (var role in BotConfig.serverSar)
+                foreach (var role in BotConfig.serverSar.Where(x => x.ServerId == Context.Guild.Id))
                 {
                     i++;
                     roleList = roleList + Environment.NewLine + i + ". " + role.Role;
