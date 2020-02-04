@@ -35,6 +35,7 @@ namespace AltimitBot2._0.Modules
         [RequireOwner]
         private async Task clear()
         {
+            await Context.Channel.DeleteMessageAsync(Context.Message);
             _this.ConsoleString = "I'm still alive!" + Environment.NewLine;
         }
         [Command("status", RunMode = RunMode.Async)]
