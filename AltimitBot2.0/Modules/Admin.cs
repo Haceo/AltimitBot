@@ -10,6 +10,7 @@ namespace AltimitBot2._0.Modules
 {
     public class Admin : ModuleBase<SocketCommandContext>
     {
+        public static MainWindow _this;
         [Command("clean", RunMode = RunMode.Async)]
         [RequireUserPermission(ChannelPermission.ManageMessages)]
         public async Task clean(int count)
@@ -30,7 +31,12 @@ namespace AltimitBot2._0.Modules
                     time: 10000);
             }
         }
-
+        [Command("clear", RunMode = RunMode.Async)]
+        [RequireOwner]
+        private async Task clear()
+        {
+            _this.ConsoleString = "I'm still alive!" + Environment.NewLine;
+        }
         [Command("status", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task status(int type = -1, [Remainder]string statusMsg = "")
