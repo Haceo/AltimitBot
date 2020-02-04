@@ -5,7 +5,6 @@ using System.Text;
 using System.Data;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Rest;
 using Discord.Commands;
 
 namespace AltimitBot2._0.Modules
@@ -323,7 +322,7 @@ namespace AltimitBot2._0.Modules
             }
             else if (searchBy.ToLower() == "dob")
             {
-                char[] sep = { ',', '/' };
+                char[] sep = { ',', '/', '.' };
                 string[] dateRaw = info.Split(sep);
                 int month = int.Parse(dateRaw[1].Trim());
                 int day = int.Parse(dateRaw[2].Trim());
@@ -336,7 +335,7 @@ namespace AltimitBot2._0.Modules
             }
             else if (searchBy.ToLower() == "submitted")
             {
-                char[] sep = { ',', '/' };
+                char[] sep = { ',', '/', '.' };
                 string[] dateRaw = info.Split(sep);
                 int month = int.Parse(dateRaw[1].Trim());
                 int day = int.Parse(dateRaw[2].Trim());

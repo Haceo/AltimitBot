@@ -14,7 +14,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 
 namespace AltimitBot2._0
@@ -58,6 +57,7 @@ namespace AltimitBot2._0
             BotConfig.LoadServerData();
             BotConfig.LoadUserData();
             BotConfig.LoadPlaylist();
+            BotConfig.LoadLocks();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

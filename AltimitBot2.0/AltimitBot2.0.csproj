@@ -237,6 +237,7 @@
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Modules\Admin.cs" />
     <Compile Include="Modules\Audio.cs" />
+    <Compile Include="Modules\ChannelLock.cs" />
     <Compile Include="Modules\DateOfBirth.cs" />
     <Compile Include="Modules\Misc.cs" />
     <Compile Include="Modules\SAR.cs" />

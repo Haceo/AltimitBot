@@ -120,7 +120,7 @@ namespace AltimitBot2._0.Modules
                 await Context.Channel.DeleteMessageAsync(Context.Message);
         }
 
-        public static async Task EmbedWriter(ISocketMessageChannel chan, IUser user, string title, string data, bool pinned = false, bool image = true, bool Direct = false, int time = 30000)
+        public static async Task<ulong> EmbedWriter(ISocketMessageChannel chan, IUser user, string title, string data, bool pinned = false, bool image = true, bool Direct = false, int time = 30000)
         {
 
             var embed = new EmbedBuilder();
@@ -136,6 +136,7 @@ namespace AltimitBot2._0.Modules
                 var msg = await chan.SendMessageAsync("", false, embedded);
                 if (pinned)
                     await msg.PinAsync();
+                return msg.Id;
             }
             else
             {
@@ -144,10 +145,12 @@ namespace AltimitBot2._0.Modules
                     var msg = await chan.SendMessageAsync("", false, embedded);
                     await Task.Delay(time);
                     await chan.DeleteMessageAsync(msg);
+                    return msg.Id;
                 }
                 else
                 {
-                    await user.SendMessageAsync("", false, embedded);
+                    var msg = await user.SendMessageAsync("", false, embedded);
+                    return msg.Id;
                 }
             }
         }

@@ -24,8 +24,8 @@ namespace AltimitBot2._0
             _client.UserJoined += JoinHandlerAsync;
             _client.JoinedGuild += JoinGuild;
             _client.UserLeft += LeaveHandlerAsync;
+            _client.ReactionAdded += ReactionAdded;
         }
-
         private async Task HandleCommandAsync(SocketMessage s)
         {
             SocketUserMessage msg = s as SocketUserMessage;
@@ -64,6 +64,29 @@ namespace AltimitBot2._0
             }
         }
 
+        private Task ReactionAdded(Discord.Cacheable<Discord.IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        {
+            Task.Run(async () =>
+            {
+                await Reaction(arg1, arg2, arg3);
+            });
+            return Task.CompletedTask;
+        }
+        private async Task Reaction(Discord.Cacheable<Discord.IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        {
+            var gChan = (arg2 as SocketGuildChannel);
+            foreach (var channel in BotConfig.LockList)
+            {
+                if (channel.Message == arg3.MessageId)
+                {
+                    if (arg3.Emote.ToString() == channel.Emote)
+                    {
+                        consoleOut("Adding role @" + channel.Role + " to user " + gChan.Guild.Users.FirstOrDefault(x => x.Id == arg3.UserId) + " in server " + gChan.Guild.Name);
+                        await gChan.Guild.Users.FirstOrDefault(x => x.Id == arg3.UserId).AddRoleAsync(gChan.Guild.Roles.FirstOrDefault(y => y.Name == channel.Role));
+                    }
+                }
+            }
+        }
         private Task JoinHandlerAsync(SocketGuildUser u)
         {
             Task.Run(async () =>
@@ -123,6 +146,7 @@ namespace AltimitBot2._0
                 });
             }
         }
+
         //VVV----copy to all modules----VVV
         public static void consoleOut(string msg)
         {

@@ -16,6 +16,7 @@ namespace AltimitBot2._0
         private const string confFolder = "Resources";
         private const string confFile = "botconf.json";
         private const string playlistFile = "/playlist.json";
+        private const string locklistFile = "/locklist.json";
         public static BotConf botConfig;
 
         private const string serverFolder = "ServerData";
@@ -23,6 +24,7 @@ namespace AltimitBot2._0
         public static ObservableCollection<UserInfo> userData = new ObservableCollection<UserInfo>();
         public static ObservableCollection<ServerSAR> serverSar = new ObservableCollection<ServerSAR>();
         public static ObservableCollection<Tracks> playList = new ObservableCollection<Tracks>();
+        public static List<LockChannel> LockList = new List<LockChannel>();
         public static void LoadConfig()
         {
             if (!Directory.Exists(confFolder))
@@ -191,6 +193,36 @@ namespace AltimitBot2._0
             File.WriteAllText(serverFolder + playlistFile, json);
             consoleOut("Saving playlist complete!");
         }
+        public static void LoadLocks()
+        {
+            if (!Directory.Exists(serverFolder))
+            {
+                consoleOut("Folder not found! Creating folder /ServerData...");
+                Directory.CreateDirectory(serverFolder);
+            }
+            else
+            {
+                if (File.Exists(serverFolder + locklistFile))
+                {
+                    consoleOut("LockList found!");
+                    string json = File.ReadAllText(serverFolder + locklistFile);
+                    LockList = JsonConvert.DeserializeObject<List<LockChannel>>(json);
+                }
+                else
+                {
+                    consoleOut("No LockList found...");
+                }
+        }
+            consoleOut("Done loading LockList...");
+        }
+        public static void SaveLocks()
+        {
+            consoleOut("Saving LockList...");
+            string json = null;
+            json = JsonConvert.SerializeObject(LockList, Formatting.Indented);
+            File.WriteAllText(serverFolder + locklistFile, json);
+            consoleOut("Saving LockList complete!");
+        }
         //VVV----copy to all modules----VVV
         public static void consoleOut(string msg)
         {
@@ -202,8 +234,6 @@ namespace AltimitBot2._0
     {
         public string token { get; set; }
         public string cmdPrefix { get; set; }
-        public Color foreColor { get; set; }
-        public Color backColor { get; set; }
     }
     public class ServerInfo
     {
@@ -246,5 +276,25 @@ namespace AltimitBot2._0
         public string Durration { get; set; }
         public string Path { get; set; }
         public ulong Server { get; set; }
+    }
+    public class LockChannel : IEquatable<LockChannel>
+    {
+        public ulong Server { get; set; }
+        public ulong Message { get; set; }
+        public ulong Channel { get; set; }
+        public string Emote { get; set; }
+        public string Role { get; set; }
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            LockChannel objAsLock = obj as LockChannel;
+            if (objAsLock == null) return false;
+            else return Equals(objAsLock);
+        }
+        public bool Equals(LockChannel other)
+        {
+            if (other == null) return false;
+            return (this.Message.Equals(other.Message));
+        }
     }
 }
