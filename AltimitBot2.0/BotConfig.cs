@@ -226,8 +226,11 @@ namespace AltimitBot2._0
         //VVV----copy to all modules----VVV
         public static void consoleOut(string msg)
         {
-
             _this.ConsoleString = _this.ConsoleString + DateTime.Now + ": " + msg + Environment.NewLine;
+        }
+        public static void consoleClear()
+        {
+            _this.ConsoleString = DateTime.Now + ": I was just cleared!" + Environment.NewLine;
         }
     }
     public class BotConf
