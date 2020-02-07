@@ -54,7 +54,7 @@ namespace AltimitBot2._0.Modules
             }
             switch (new Random().Next(0, 30))
             {
-                case 0:
+                case 7:
                     owoified += $"{owoStrings[new Random().Next(0, owoStrings.Length)]}";
                     break;
             }
