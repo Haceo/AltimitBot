@@ -240,6 +240,7 @@
     <Compile Include="Modules\ChannelLock.cs" />
     <Compile Include="Modules\DateOfBirth.cs" />
     <Compile Include="Modules\Misc.cs" />
+    <Compile Include="Modules\OwOify.cs" />
     <Compile Include="Modules\SAR.cs" />
     <Compile Include="Server Manager.xaml.cs">
       <DependentUpon>Server Manager.xaml</DependentUpon>
