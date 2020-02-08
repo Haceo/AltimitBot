@@ -14,12 +14,28 @@ namespace AltimitBot2._0.Modules
         [Command("owo", RunMode = RunMode.Async)]
         public async Task owo([Remainder]string msg)
         {
+            await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
             if (msg == "")
                 return;
-            await owoify(Context.Channel, Context.User, msg);
+            var serv = BotConfig.serverData.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            var chan = serv.botChannel;
+            var role = serv.botRole;
+            if (chan != null)
+            {
+                if (Context.Channel.ToString() == chan | (Context.User as SocketGuildUser).Roles.Contains(Context.Guild.Roles.FirstOrDefault(x => x.Name == role)))
+                {
+                    await owoify(Context.Channel, Context.User, msg);
+                }
+                else
+                    return;
+            }
+            else if (chan == null)
+            {
+                await owoify(Context.Channel, Context.User, msg);
+            }
         }
-        public async Task owoify(ISocketMessageChannel chan, SocketUser user, string msg)
+        public static async Task owoify(ISocketMessageChannel chan, SocketUser user, string msg)
         {
             string[] owoFaces = { "OwO", "Owo", "owO", "ÓwÓ", "ÕwÕ", "@w@", "ØwØ", "øwø", "uwu", "UwU", "☆w☆", "✧w✧", "♥w♥", "゜w゜", "◕w◕", "ᅌwᅌ", "◔w◔", "ʘwʘ", "⓪w⓪", " ︠ʘw ︠ʘ", "(owo)" };
             string[] owoStrings = { "OwO *what's this*", "OwO *notices bulge*", "uwu yu so warm~", "owo pounces on you~~" };

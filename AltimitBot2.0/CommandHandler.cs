@@ -62,6 +62,13 @@ namespace AltimitBot2._0
                 consoleOut("Message: " + msg.Content);
                 return;
             }
+            else if (msg.Channel.Name == "owoified" && !context.User.IsBot)
+            {
+                await Task.Delay(200);
+                await msg.DeleteAsync();
+                Modules.OwOify.owoify(msg.Channel, context.User, msg.Content);
+                return;
+            }
         }
 
         private Task ReactionAdded(Discord.Cacheable<Discord.IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
