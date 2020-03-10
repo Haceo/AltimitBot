@@ -32,7 +32,7 @@ namespace AltimitBot2._0.Modules
                     time: 10000);
                 return;
             }
-            string[] dob = message.Split(new char[] { ',', '/', '-', ' ' });
+            string[] dob = message.Split(new char[] { ',', '.', '/', '-', ' ' });
             int dobYear = int.Parse(dob[0].Trim());
             int dobMon = int.Parse(dob[1].Trim());
             int dobDay = int.Parse(dob[2].Trim());
