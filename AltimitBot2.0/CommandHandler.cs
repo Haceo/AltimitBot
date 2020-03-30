@@ -126,7 +126,7 @@ namespace AltimitBot2._0
                 return;
             var server = u.Guild;
             var channel = (server.Channels.FirstOrDefault(x => x.Name == "welcome") as ISocketMessageChannel);
-            await Modules.Misc.EmbedWriter(channel, u, "User left", u.Username + " has left the server", time: -1);
+            await Modules.Misc.EmbedWriter(channel, u, "User left", u.Username + " has left the server" + Environment.NewLine + Environment.NewLine + u.Id.ToString(), time: -1);
         }
         private Task JoinGuild(SocketGuild g)
         {
