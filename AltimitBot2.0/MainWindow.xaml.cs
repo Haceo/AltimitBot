@@ -58,6 +58,7 @@ namespace AltimitBot2._0
             BotConfig.LoadUserData();
             BotConfig.LoadPlaylist();
             BotConfig.LoadLocks();
+            BotConfig.LoadTimeouts();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

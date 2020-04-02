@@ -17,6 +17,7 @@ namespace AltimitBot2._0
         private const string confFile = "botconf.json";
         private const string playlistFile = "/playlist.json";
         private const string locklistFile = "/locklist.json";
+        private const string timeoutlistFile = "/timeoutlist.json";
         public static BotConf botConfig;
 
         private const string serverFolder = "ServerData";
@@ -24,6 +25,7 @@ namespace AltimitBot2._0
         public static ObservableCollection<UserInfo> userData = new ObservableCollection<UserInfo>();
         public static ObservableCollection<ServerSAR> serverSar = new ObservableCollection<ServerSAR>();
         public static ObservableCollection<Tracks> playList = new ObservableCollection<Tracks>();
+        public static ObservableCollection<TimeoutMember> TimeoutList = new ObservableCollection<TimeoutMember>();
         public static List<LockChannel> LockList = new List<LockChannel>();
         public static void LoadConfig()
         {
@@ -223,6 +225,37 @@ namespace AltimitBot2._0
             File.WriteAllText(serverFolder + locklistFile, json);
             consoleOut("Saving LockList complete!");
         }
+
+        public static void LoadTimeouts()
+        {
+            if (!Directory.Exists(serverFolder))
+            {
+                consoleOut("Folder not found! Creating folder /ServerData...");
+                Directory.CreateDirectory(serverFolder);
+            }
+            else
+            {
+                if (File.Exists(serverFolder + timeoutlistFile))
+                {
+                    consoleOut("Timeouts found!");
+                    string json = File.ReadAllText(serverFolder + timeoutlistFile);
+                    TimeoutList = JsonConvert.DeserializeObject<ObservableCollection<TimeoutMember>>(json);
+                }
+                else
+                {
+                    consoleOut("No timeouts found...");
+                }
+            }
+            consoleOut("Done loading timeouts...");
+        }
+        public static void SaveTimeouts()
+        {
+            consoleOut("Saving timeouts...");
+            string json = null;
+            json = JsonConvert.SerializeObject(TimeoutList, Formatting.Indented);
+            File.WriteAllText(serverFolder + timeoutlistFile, json);
+            consoleOut("Saving timeouts complete!");
+        }
         //VVV----copy to all modules----VVV
         public static void consoleOut(string msg)
         {
@@ -299,5 +332,18 @@ namespace AltimitBot2._0
             if (other == null) return false;
             return (this.Message.Equals(other.Message));
         }
+    }
+    public class TimeoutMember
+    {
+        public ulong ServerId { get; set; }
+        public string Name { get; set; }
+        public ulong UserId { get; set; }
+        public string Reason { get; set; }
+        public string Issuer { get; set; }
+        public ulong IssuerId { get; set; }
+        public DateTime Start { get; set; }
+        public int Duration { get; set; }
+        public List<ulong> SavedRoles { get; set; }
+        public ulong TimeoutRole { get; set; }
     }
 }

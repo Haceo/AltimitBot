@@ -197,6 +197,70 @@ namespace AltimitBot2._0.Modules
                 Environment.NewLine +
                 memberList, time: time);
         }
+
+        [Command("timeout", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
+        public async Task timeout(ulong userid, string timeoutrole, string reason, int duration = -1)
+        {
+            var timeoutRole = Context.Guild.Roles.FirstOrDefault(x => x.Name == timeoutrole);
+            var targetuser = Context.Guild.Users.FirstOrDefault(x => x.Id == userid);
+            List<ulong> rolelist = new List<ulong>();
+            foreach (var role in targetuser.Roles)
+                if (!role.IsEveryone)
+                    rolelist.Add(role.Id);
+            var issuinguser = Context.User;
+
+            TimeoutMember newTimeout = new TimeoutMember();
+            newTimeout.ServerId = Context.Guild.Id;
+            newTimeout.Name = targetuser.Username;
+            newTimeout.UserId = targetuser.Id;
+            newTimeout.Reason = reason;
+            newTimeout.Issuer = issuinguser.Username;
+            newTimeout.IssuerId = issuinguser.Id;
+            newTimeout.Start = DateTime.Now;
+            newTimeout.Duration = duration;
+            newTimeout.SavedRoles = rolelist;
+            newTimeout.TimeoutRole = timeoutRole.Id;
+            BotConfig.TimeoutList.Add(newTimeout);
+            foreach (var role in targetuser.Roles)
+            {
+                if (!role.IsEveryone)
+                {
+                    await targetuser.RemoveRoleAsync(role);
+                }
+            }
+            await targetuser.AddRoleAsync(timeoutRole);
+            BotConfig.SaveTimeouts();
+            BotConfig.consoleOut("User " + newTimeout.Name + " was put in timeout in server " + Context.Guild.Name + Environment.NewLine +
+                "Issuer: " + newTimeout.Issuer + " " + newTimeout.IssuerId + " Duration: " + newTimeout.Duration + " hours" + Environment.NewLine +
+                "Reason:" + Environment.NewLine +
+                newTimeout.Reason);
+        }
+
+        [Command("timein", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
+        public async Task timein(ulong userid)
+        {
+            var server = Context.Guild;
+            TimeoutMember timeout = BotConfig.TimeoutList.FirstOrDefault(x => x.UserId == userid && x.ServerId == server.Id) ?? null;
+            if (timeout == null)
+            {
+                await Misc.EmbedWriter(Context.Channel, Context.User,
+                    "Error!",
+                    "The UserID " + userid + " was not found in the Timeout list.");
+                return;
+            }
+            var targetuser = Context.Guild.Users.FirstOrDefault(x => x.Id == userid);
+            foreach (var role in timeout.SavedRoles)
+            {
+                await targetuser.AddRoleAsync(server.Roles.FirstOrDefault(x => x.Id == role));
+            }
+            await targetuser.RemoveRoleAsync(server.Roles.FirstOrDefault(x => x.Id == timeout.TimeoutRole));
+            BotConfig.TimeoutList.Remove(timeout);
+            TimeSpan diff = DateTime.Now - timeout.Start;
+            BotConfig.consoleOut("User " + timeout.Name + " has been reinstated from timeout in server " + server.Name + " by user " + Context.User + ". Duration: " + diff.Hours + " hours.");
+            BotConfig.SaveTimeouts();
+        }
     }
     public class RoleObject
     {

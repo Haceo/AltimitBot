@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
+using System.Timers;
 
 namespace AltimitBot2._0
 {
@@ -14,6 +15,7 @@ namespace AltimitBot2._0
         public static MainWindow _this;
         DiscordSocketClient _client;
         CommandService _service;
+        public static Timer TimeoutTimer;
 
         public async Task InitAsync(DiscordSocketClient client)
         {
@@ -25,6 +27,9 @@ namespace AltimitBot2._0
             _client.JoinedGuild += JoinGuild;
             _client.UserLeft += LeaveHandlerAsync;
             _client.ReactionAdded += ReactionAdded;
+            TimeoutTimer = new Timer() { Interval = 900000 };
+            TimeoutTimer.Elapsed += CheckTimeouts;
+            TimeoutTimer.Enabled = true;
         }
         private async Task HandleCommandAsync(SocketMessage s)
         {
@@ -151,6 +156,31 @@ namespace AltimitBot2._0
                     BotConfig.serverData.Add(newServer);
                     BotConfig.SaveServerData();
                 });
+            }
+        }
+        private void CheckTimeouts(object sender, ElapsedEventArgs e)
+        {
+            RunCheck();
+        }
+        private async Task RunCheck()
+        {
+            foreach (TimeoutMember timeout in BotConfig.TimeoutList)
+            {
+                if (timeout.Duration == -1)
+                    return;
+                TimeSpan diff = DateTime.Now - timeout.Start;
+                if (diff.Hours == timeout.Duration)
+                {
+                    var server = _client.Guilds.FirstOrDefault(x => x.Id == timeout.ServerId);
+                    var user = server.Users.FirstOrDefault(x => x.Id == timeout.UserId);
+                    await user.RemoveRoleAsync(server.Roles.FirstOrDefault(x => x.Id == timeout.TimeoutRole));
+                    foreach (var role in timeout.SavedRoles)
+                    {
+                        await user.AddRoleAsync(server.Roles.FirstOrDefault(x => x.Id == role));
+                    }
+                    BotConfig.consoleOut("User " + timeout.Name + " has been reinstated from timeout in server " + server.Name + ". Duration: " + timeout.Duration + " hours.");
+                    BotConfig.SaveTimeouts();
+                }
             }
         }
 
