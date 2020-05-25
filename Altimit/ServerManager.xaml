@@ -1,0 +1,145 @@
+﻿<Window x:Class="Altimit_v3.ServerManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Altimit_v3"
+        mc:Ignorable="d"
+        Title="ServerManager" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Height="450" Width="800" Loaded="WPF_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0" Grid.ColumnSpan="99" Margin="3">
+            <TabItem Header="DOB">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListView Name="dobListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding UserList}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Username" DisplayMemberBinding="{Binding UserName}"/>
+                                <GridViewColumn Header="User ID" DisplayMemberBinding="{Binding UserId}"/>
+                                <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthday}"/>
+                                <GridViewColumn Header="Submitted" DisplayMemberBinding="{Binding Submitted}"/>
+                                <GridViewColumn Header="Flagged" DisplayMemberBinding="{Binding Flagged}"/>
+                                <GridViewColumn Header="Reason" DisplayMemberBinding="{Binding Status}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Label Content="New User Role ID:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Name="newUserRoleIdBox" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" Margin="5"/>
+                    <Label Content="Member Role ID:" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Name="memberRoleIdBox" Grid.Row="1" Grid.Column="3" HorizontalContentAlignment="Center" Margin="5"/>
+                    <Label Content="Admin Log Channel:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="5"/>
+                    <TextBox Name="adminLogChanBox" Grid.Row="2" Grid.Column="0" Width="200" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Margin="75,5,5,5"/>
+                    <Button Content="Add" Grid.Row="2" Grid.Column="1" Width="100" Grid.ColumnSpan="2" Margin="100,5,5,5" Click="DOBAdd_Click"/>
+                    <Button Content="Edit" Grid.Row="2" Grid.Column="2" Width="100" Grid.ColumnSpan="2" Margin="5,5,50,5" Click="DOBEdit_Click"/>
+                    <Button Content="Remove" Grid.Row="2" Grid.Column="3" Width="100" Margin="5" Click="DOBRemove_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Reaction Locks">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListView Name="reactionLockListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding LockList}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Channel ID" DisplayMemberBinding="{Binding Channel}"/>
+                                <GridViewColumn Header="Message ID" DisplayMemberBinding="{Binding Message}"/>
+                                <GridViewColumn Header="Reaction Emote" DisplayMemberBinding="{Binding Emote}"/>
+                                <GridViewColumn Header="Award Role" DisplayMemberBinding="{Binding Role}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button Content="Add" Grid.Row="1" Grid.Column="0" Width="100" Margin="5" Click="LockAdd_Click"/>
+                    <Button Content="Edit" Grid.Row="1" Grid.Column="1" Width="100" Margin="5" Click="LockEdit_Click"/>
+                    <Button Content="Remove" Grid.Row="1" Grid.Column="2" Width="100" Margin="5" Click="LockRemove_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Music">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListView Name="songListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding SongList}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Song Title" DisplayMemberBinding="{Binding Path=Title}"/>
+                                <GridViewColumn Header="Song Length" DisplayMemberBinding="{Binding Path=Duration}"/>
+                                <GridViewColumn Header="Added By" DisplayMemberBinding="{Binding Path=User}"/>
+                                <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path=Path}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button Content="Remove" Grid.Row="1" Grid.Column="0" Width="100" Margin="5" Click="MusicRemove_Click"/>
+
+                    <Label Content="Max song duration (in min):" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                    <TextBox Name="serverMaxTrackTimeBox" Grid.Row="2" Grid.Column="1" Width="100" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+                    <CheckBox Name="continuousCheckBox" Grid.Row="2" Grid.Column="2" Content="Continuous Playback" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                    <CheckBox Name="loopOneCheckBox" Grid.Row="2" Grid.Column="3" Content="Loop One" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings">
+                <GroupBox Header="Bot Settings" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox Name="serverPrefixCheckBox" Grid.Row="0" Grid.Column="0" Content="Prefix" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Prefix_Enable" Unchecked="Prefix_Disable" Margin="5"/>
+                        <ComboBox Name="serverPrefixBox" Grid.Row="0" Grid.Column="1" Width="150" Height="25" IsEnabled="False" Margin="5"/>
+                        <Label Content="Admin Role:" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="adminRoleBox" Grid.Row="0" Grid.Column="3" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+
+                        <Label Content="Bot Channel:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="botchanBox" Grid.Row="1" Grid.Column="1" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+                        <Label Content="DoB Channel:" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="dobchanBox" Grid.Row="1" Grid.Column="3" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+
+                        <Label Content="Welcome Channel:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="welcomeChanBox" Grid.Row="2" Grid.Column="1" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+                    </Grid>
+                </GroupBox>
+            </TabItem>
+        </TabControl>
+        <Button Content="Save" Width="100" Margin="10" Grid.Row="1" Grid.Column="0" Click="Save_Click"/>
+        <Button Content="Close" Width="100" Margin="10" Grid.Row="1" Grid.Column="1" Click="Close_Click"/>
+    </Grid>
+</Window>
