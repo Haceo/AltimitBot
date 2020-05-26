@@ -16,7 +16,6 @@ namespace Altimit_v3.Modules
         private static readonly string tempDir = Path.Combine(Directory.GetCurrentDirectory(), "Temp");
         IAudioClient _audioClient;
         public static MainWindow _main;
-        bool playing = false;
         //-----Commands----------------------------------------------------------------------------------------------------
         [Command("add", RunMode = RunMode.Async)]
         public async Task AddTrack(string url)
@@ -65,7 +64,7 @@ namespace Altimit_v3.Modules
                         User = Context.User.Username,
                         Path = file
                     });
-                    BotFrame.SaveFile("servers");
+                    await BotFrame.SaveFile("servers");
                     BotFrame.consoleOut("DONE");
                 }
                 catch (Exception ex)
@@ -80,6 +79,14 @@ namespace Altimit_v3.Modules
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            if (audioInfo.Playing && trackNumber == 1)
+            {
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit",
+                    "You can't select the currently playing track.");
+                return;
+            }
             if (trackNumber <= 0 || trackNumber > server.SongList.Count)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
@@ -109,71 +116,123 @@ namespace Altimit_v3.Modules
                 $"Playlist:" + Environment.NewLine + songList, time: 60000);
         }
         [Command("play", RunMode = RunMode.Async)]
-        public async Task PlaySongs(IVoiceChannel channel = null)
+        public async Task PlaySongs()
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
-            if (server.BotChannel == 0)
-            channel = channel ?? (Context.User as IGuildUser)?.VoiceChannel;
-            if (channel == null)
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            if (audioInfo == null)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
-                    "Altimit Audio",
-                    "User must be in a voice channel or a voice channel must be passed as an argument.");
-                return;
+                audioInfo = new AudioContainer()
+                {
+                    Server = server.ServerId,
+                    Channel = (Context.User as IGuildUser)?.VoiceChannel,
+                    Playing = false,
+                    Interrupt = false
+                };
+                if (audioInfo.Channel == null)
+                {
+                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                        "Altimit Audio",
+                        "User must be in a voice channel or a voice channel must be passed as an argument.");
+                    return;
+                }
+                _main.AudioInfo.Add(audioInfo);
             }
-            if (playing)
+            if (audioInfo.Playing)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     "Player already in another channel please wait for the bot to become available or utilize the channel already in use.");
             }
-            _audioClient = await channel.ConnectAsync();
-            playing = true;
+            _audioClient = await audioInfo.Channel.ConnectAsync();
+            audioInfo.Playing = true;
+            BotFrame.consoleOut("PLAY");
             PlaybackLoop(server);
+        }
+        [Command("skip", RunMode = RunMode.Async)]
+        public async Task SkipTrack()
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            if (!audioInfo.Playing)
+            {
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Audio",
+                    $"No track playing, try using ``{(char)server.Prefix}playlist`` and ``{(char)server.Prefix}remove <track number>`` to remove a track.");
+                return;
+            }
+            BotFrame.consoleOut($"{Context.User} SKIP");
+            audioInfo.Interrupt = true;
+            audioInfo.ffmpeg.Kill();
         }
         [Command("stop", RunMode = RunMode.Async)]
         public async Task StopPlaying()
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
-            playing = false;
-            await _audioClient.StopAsync();
-            _audioClient.Dispose();
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            if (!audioInfo.Playing)
+            {
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Audio",
+                    "No track playing!");
+                return;
+            }
+            audioInfo.Playing = false;
+            BotFrame.consoleOut("Stopping playback!");
+            await audioInfo.Channel.DisconnectAsync();
+        }
+        [Command("leave", RunMode = RunMode.Async)]
+        public async Task LeaveChannel()
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            await audioInfo.Channel.DisconnectAsync();
         }
         //-----playback loop----------------------------------------------------------------------------------------------------------------------------------------
         private async Task PlaybackLoop(DiscordServer server)
         {
-            while (server.SongList.Count != 0 && playing)
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            while (server.SongList.Count != 0 && audioInfo.Playing)
             {
                 var track = server.SongList.First();
                 BotFrame.consoleOut($"Playing: {track.Title} - Added by: {track.User}");
                 try
                 {
-                    await SendAsync(track.Path);
+                    await SendAsync(track.Path, server);
                 }
                 catch (Exception ex)
                 {
                     BotFrame.consoleOut($"Playback Error! {ex.Message}");
                     return;
                 }
-                if (!server.LoopOne)
+                if (!server.LoopOne || audioInfo.Interrupt)
                 {
                     File.Delete(track.Path);
                     server.SongList.Remove(track);
                     BotFrame.SaveFile("servers");
+                    audioInfo.Interrupt = false;
                 }
                 await Task.Delay(4000);
                 if (!server.Continuous)
                     return;
             }
+            await audioInfo.Channel.DisconnectAsync();
+            _main.AudioInfo.Remove(audioInfo);
         }
         //-----ffmpeg------------------------------------------------------------------------------------------------------------------------------------------------
-        public async Task SendAsync(string path)
+        public async Task SendAsync(string path, DiscordServer server)
         {
-            using (Process ffmpeg = CreateStream(path))
-            using (Stream output = ffmpeg.StandardOutput.BaseStream)
+            var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            using (audioInfo.ffmpeg = CreateStream(path))
+            using (Stream output = audioInfo.ffmpeg.StandardOutput.BaseStream)
             using (AudioStream discord = _audioClient.CreatePCMStream(AudioApplication.Music))
             {
                 await output.CopyToAsync(discord);

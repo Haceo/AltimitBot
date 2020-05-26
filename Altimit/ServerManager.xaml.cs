@@ -1,5 +1,4 @@
 ﻿using Discord.WebSocket;
-using Altimit_v3.Modules;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

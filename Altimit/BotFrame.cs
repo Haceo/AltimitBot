@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Discord;
 using Discord.WebSocket;
+using System.Diagnostics;
 
 namespace Altimit_v3
 {
@@ -16,7 +17,7 @@ namespace Altimit_v3
         public static Config config;
         public static bool TimeStamp = true;
 
-        public static void LoadFile(string file)
+        public static async Task LoadFile(string file)
         {
             if (!Check(file))
             {
@@ -42,7 +43,7 @@ namespace Altimit_v3
                 }
             }
         }
-        public static void SaveFile(string file)
+        public static async Task SaveFile(string file)
         {
             consoleOut($"Saving {file}...");
             string json = "";
@@ -55,7 +56,15 @@ namespace Altimit_v3
                     json = JsonConvert.SerializeObject(_main.ServerList, Formatting.Indented);
                     break;
             }
-            File.WriteAllText(resDir + "/" + file + ".json", json);
+            try
+            {
+                File.WriteAllText(resDir + "/" + file + ".json", json);
+            }
+            catch (Exception ex)
+            {
+                BotFrame.consoleOut(ex.Message);
+                return;
+            }
             consoleOut($"Saved {file}!");
         }
         public static bool Check(string file)
@@ -164,6 +173,14 @@ namespace Altimit_v3
         public string Duration { get; set; }
         public string User { get; set; }
         public string Path { get; set; }
+    }
+    public class AudioContainer
+    {
+        public ulong Server { get; set; }
+        public IVoiceChannel Channel { get; set; }
+        public Process ffmpeg { get; set; }
+        public bool Playing { get; set; }
+        public bool Interrupt { get; set; }
     }
     public class UserInfo
     {

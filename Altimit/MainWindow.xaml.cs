@@ -20,6 +20,7 @@ namespace Altimit_v3
     {
         public static DiscordSocketClient _client;
         static CommandHandler _handler;
+        public List<AudioContainer> AudioInfo = new List<AudioContainer>();
         public event PropertyChangedEventHandler PropertyChanged;
         private string consoleString;
         public string ConsoleString
@@ -160,16 +161,19 @@ namespace Altimit_v3
         {
             if (_client == null)
                 return;
+            if (serverListBox.SelectedIndex == -1)
+                return;
             ServerManager sm = new ServerManager();
             sm.Owner = this;
             sm._client = _client;
             sm._server = ServerList[serverListBox.SelectedIndex];
             sm.Title = $"Server: {sm._server.ServerName}";
-            if (_client.ConnectionState == ConnectionState.Connected)
+            var socGuild = _client.Guilds.FirstOrDefault(x => x.Id == sm._server.ServerId);
+            if (_client.ConnectionState == ConnectionState.Connected && socGuild != null)
             {
                 var bi = new BitmapImage();
                 bi.BeginInit();
-                bi.UriSource = new Uri(_client.Guilds.FirstOrDefault(x => x.Id == sm._server.ServerId).IconUrl);
+                bi.UriSource = new Uri(socGuild.IconUrl);
                 bi.EndInit();
                 sm.Icon = bi;
             }

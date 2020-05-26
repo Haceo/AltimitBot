@@ -70,7 +70,7 @@ namespace Altimit_v3
                 return;
             }
                 if (server.WelcomeChannel != 0 && server.UseWelcomeForDob)
-                    await (u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel).SendMessageAsync($"Hey {u.Mention}, welcome to **{server.ServerName}**. Please read the rules and enter your date of birth in the #{u.Guild.Channels.FirstOrDefault(y => y.Id == server.DOBChannel).Name}. You must be 18+!");
+                    await (u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel).SendMessageAsync($"Hey {u.Mention}, welcome to **{server.ServerName}**. Please read the rules and enter your date of birth in the {u.Guild.Channels.FirstOrDefault(y => y.Id == server.DOBChannel)}. You must be 18+");
             }
         }
         private async Task UserLeaveHandler(SocketGuildUser u)
