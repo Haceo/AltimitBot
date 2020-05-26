@@ -80,17 +80,17 @@ namespace Altimit_v3.Modules
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
-            if (audioInfo.Playing && trackNumber == 1)
+            if (audioInfo != null && audioInfo.Playing && trackNumber == 1)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
-                    "Altimit",
+                    "Altimit Audio",
                     "You can't select the currently playing track.");
                 return;
             }
             if (trackNumber <= 0 || trackNumber > server.SongList.Count)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
-                    "Altimit",
+                    "Altimit Audio",
                     "Please select a track that exists in the list.");
                 return;
             }
@@ -158,11 +158,11 @@ namespace Altimit_v3.Modules
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
-            if (!audioInfo.Playing)
+            if (audioInfo == null || !audioInfo.Playing)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
-                    $"No track playing, try using ``{(char)server.Prefix}playlist`` and ``{(char)server.Prefix}remove <track number>`` to remove a track.");
+                    $"No track playing, try using ``{(char)server.Prefix}playlist`` and ``{(char)server.Prefix}remove (int)track`` to remove a track.");
                 return;
             }
             BotFrame.consoleOut($"{Context.User} SKIP");
@@ -176,7 +176,7 @@ namespace Altimit_v3.Modules
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
-            if (!audioInfo.Playing)
+            if (audioInfo == null || !audioInfo.Playing)
             {
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
@@ -194,6 +194,13 @@ namespace Altimit_v3.Modules
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
+            if (audioInfo == null)
+            {
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Audio",
+                    $"Not in voice channel!");
+                return;
+            }
             await audioInfo.Channel.DisconnectAsync();
         }
         //-----playback loop----------------------------------------------------------------------------------------------------------------------------------------
