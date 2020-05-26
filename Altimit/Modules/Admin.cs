@@ -12,7 +12,7 @@ namespace Altimit_v3.Modules
     {
         public static MainWindow _main;
         [Command("lookup", RunMode = RunMode.Async)]
-        private async Task lookup(string info, string searchBy = "userid", string status = "", int time = 20000)
+        private async Task lookup(string searchBy, string info = "", int time = 20000)
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
@@ -52,7 +52,7 @@ namespace Altimit_v3.Modules
                         outputList.Add(data);
                     break;
                 case "status":
-                    UserStatus userStatus = (UserStatus)Enum.Parse(typeof(UserStatus), status, true);
+                    UserStatus userStatus = (UserStatus)Enum.Parse(typeof(UserStatus), info, true);
                     foreach (var data in server.UserInfoList.Where(x => x.Status == userStatus))
                         outputList.Add(data);
                     break;

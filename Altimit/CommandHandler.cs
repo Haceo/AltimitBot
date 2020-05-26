@@ -69,7 +69,7 @@ namespace Altimit_v3
                 BotFrame.consoleOut(ex.Message);
                 return;
             }
-                if (server.WelcomeChannel != 0)
+                if (server.WelcomeChannel != 0 && server.UseWelcomeForDob)
                     await (u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel).SendMessageAsync($"Hey {u.Mention}, welcome to **{server.ServerName}**. Please read the rules and enter your date of birth in the #{u.Guild.Channels.FirstOrDefault(y => y.Id == server.DOBChannel).Name}. You must be 18+!");
             }
         }
@@ -77,10 +77,11 @@ namespace Altimit_v3
         {
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == u.Guild.Id);
             var chan = u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel;
-            await BotFrame.EmbedWriter(chan, u,
-                "Altimit",
-                $"{u} has left the server {Environment.NewLine}{Environment.NewLine}{u.Id}",
-                time: -1);
+            if (server.WelcomeChannel != 0 && server.UseWelcomeForLeave)
+                await BotFrame.EmbedWriter(chan, u,
+                    "Altimit",
+                    $"{u} has left the server {Environment.NewLine}{Environment.NewLine}{u.Id}",
+                    time: -1);
         }
         private async Task ReactionAddedHandler(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {

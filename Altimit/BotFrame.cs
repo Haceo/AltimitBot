@@ -143,6 +143,8 @@ namespace Altimit_v3
         public ulong DOBChannel { get; set; }
         public ulong AdminChannel { get; set; }
         public ulong WelcomeChannel { get; set; }
+        public bool UseWelcomeForLeave { get; set; }
+        public bool UseWelcomeForDob { get; set; }
         public ulong AdminRole { get; set; }
         public ulong NewUserRole { get; set; }
         public ulong MemberRole { get; set; }
