@@ -82,6 +82,8 @@ namespace Altimit_v3
             botchanBox.Text = _server.BotChannel.ToString();
             dobchanBox.Text = _server.DOBChannel.ToString();
             welcomeChanBox.Text = _server.WelcomeChannel.ToString();
+            dobCheckBox.IsChecked = _server.UseWelcomeForDob;
+            leaveCheckBox.IsChecked = _server.UseWelcomeForLeave;
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -279,6 +281,8 @@ namespace Altimit_v3
                 _server.WelcomeChannel = welcomeChan;
             else
                 _server.WelcomeChannel = 0;
+            _server.UseWelcomeForDob = dobCheckBox.IsChecked.Value;
+            _server.UseWelcomeForLeave = leaveCheckBox.IsChecked.Value;
             BotFrame.SaveFile("servers");
         }
         private void Close_Click(object sender, RoutedEventArgs e)

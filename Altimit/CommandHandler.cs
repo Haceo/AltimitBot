@@ -25,6 +25,7 @@ namespace Altimit_v3
             _client.ReactionAdded += ReactionAddedHandler;
             _client.MessageReceived += MessageReceivedHandler;
         }
+
         private async Task JoinedGuildHandler(SocketGuild guild)
         {
             DiscordServer saved = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
@@ -52,12 +53,20 @@ namespace Altimit_v3
         {
             if (u == null)
                 return;
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == u.Guild.Id);
             if (u.IsBot)
             {
                 BotFrame.consoleOut($"User {u} is a bot!");
+                if (server.AdminRole != 0 && server.AdminChannel != 0)
+                {
+                    var adminRole = u.Guild.Roles.FirstOrDefault(x => x.Id == server.AdminRole);
+                    await BotFrame.EmbedWriter(u.Guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel, u,
+                        "Altimit",
+                        $"{adminRole.Mention} User {u} is a bot!",
+                        time: -1);
+                }
                 return;
             }
-            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == u.Guild.Id);
             if (server.NewUserRole != 0)
             {
             try

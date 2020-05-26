@@ -13,6 +13,7 @@ namespace Altimit_v3.Modules
         public static async Task Submit(DiscordServer server, SocketCommandContext context)
         {
             var adminChan = context.Guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel;
+            var adminRole = context.Guild.Roles.FirstOrDefault(x => x.Id == server.AdminRole);
             var user = server.UserInfoList.FirstOrDefault(x => x.UserId == context.User.Id);
             if (user != null)
             {
@@ -23,7 +24,7 @@ namespace Altimit_v3.Modules
                     image: false, direct: true);
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit",
-                    $"A user is trying to enter DOB and already has an entry...{Environment.NewLine}" +
+                    $"{adminRole.Mention} A user is trying to enter DOB and already has an entry...{Environment.NewLine}" +
                     $"Username: {user.UserName}{Environment.NewLine}" +
                     $"User ID: {user.UserId}{Environment.NewLine}" +
                     $"Birthday: {user.Birthday}{Environment.NewLine}" +
@@ -65,7 +66,7 @@ namespace Altimit_v3.Modules
                     newUser.Status = UserStatus.Close;
                     await BotFrame.EmbedWriter(adminChan, context.User,
                         "Altimit",
-                        $"User turned 18 within the last month!{Environment.NewLine}" +
+                        $"{adminRole.Mention} User turned 18 within the last month!{Environment.NewLine}" +
                         $"Username: {newUser.UserName}{Environment.NewLine}" +
                         $"User ID: {newUser.UserId}{Environment.NewLine}" +
                         $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
@@ -102,7 +103,7 @@ namespace Altimit_v3.Modules
                     image: false, direct: true);
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit",
-                    $"User is underage!{Environment.NewLine}" +
+                    $"{adminRole.Mention} User is underage!{Environment.NewLine}" +
                     $"Username: {newUser.UserName}{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
                     $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
@@ -121,7 +122,7 @@ namespace Altimit_v3.Modules
                     image: false, direct: true);
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit",
-                    $"User has entered a questionably old age!{Environment.NewLine}" +
+                    $"{adminRole.Mention} User has entered a questionably old age!{Environment.NewLine}" +
                     $"Username: {newUser.UserName}{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
                     $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
