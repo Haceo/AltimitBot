@@ -27,7 +27,8 @@ namespace Altimit_v3.Modules
             {
                 try
                 {
-                    BotFrame.consoleOut($"GET {url}");
+                    BotFrame.consoleOut($"{Context.User} GET {url}");
+                    ulong msg = await BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Please wait while I get {url}...", time: -1);
                     Tuple<string, string> info = await YoutubeInfo(url);
                     string[] time = info.Item2.Split(':');
                     int min = 0;
@@ -48,10 +49,12 @@ namespace Altimit_v3.Modules
                             min++;
                         if (server.MaxLength < min)
                         {
-                            await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            await Context.Channel.DeleteMessageAsync(msg);
+                            BotFrame.EmbedWriter(Context.Channel, Context.User,
                                 "Altimit Audio",
                                 $"Song must be under {server.MaxLength} minutes long!" + Environment.NewLine +
                                 $"Length: {info.Item2}");
+                            return;
                         }
                     }
                     string file = await YoutubeDL(url);
@@ -66,6 +69,8 @@ namespace Altimit_v3.Modules
                     });
                     await BotFrame.SaveFile("servers");
                     BotFrame.consoleOut("DONE");
+                    await Context.Channel.DeleteMessageAsync(msg);
+                    BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Done getting {url}");
                 }
                 catch (Exception ex)
                 {
@@ -82,20 +87,22 @@ namespace Altimit_v3.Modules
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
             if (audioInfo != null && audioInfo.Playing && trackNumber == 1)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     "You can't select the currently playing track.");
                 return;
             }
             if (trackNumber <= 0 || trackNumber > server.SongList.Count)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     "Please select a track that exists in the list.");
                 return;
             }
             File.Delete(server.SongList[trackNumber--].Path);
             server.SongList.Remove(server.SongList[trackNumber--]);
+            BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Removed track {trackNumber} from playlist...");
+            BotFrame.consoleOut($"{Context.User} REMOVE");
             BotFrame.SaveFile("servers");
         }
         [Command("playlist", RunMode = RunMode.Async)]
@@ -111,9 +118,9 @@ namespace Altimit_v3.Modules
                 i++;
                 songList = songList + $"{i}. {song.Title} - {song.Duration} - Added by: {song.User}" + Environment.NewLine;
             }
-            await BotFrame.EmbedWriter(Context.Channel, Context.User,
+            BotFrame.EmbedWriter(Context.Channel, Context.User,
                 "Altimit",
-                $"Playlist:" + Environment.NewLine + songList, time: 60000);
+                $"Playlist:" + Environment.NewLine + songList, time: 30000);
         }
         [Command("play", RunMode = RunMode.Async)]
         public async Task PlaySongs()
@@ -121,6 +128,11 @@ namespace Altimit_v3.Modules
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            if (server.SongList.Count <= 0)
+            {
+                BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"No tracks to play, please add a track or wait for one to finish downloading.");
+                return;
+            }
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
             if (audioInfo == null)
             {
@@ -133,7 +145,7 @@ namespace Altimit_v3.Modules
                 };
                 if (audioInfo.Channel == null)
                 {
-                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    BotFrame.EmbedWriter(Context.Channel, Context.User,
                         "Altimit Audio",
                         "User must be in a voice channel or a voice channel must be passed as an argument.");
                     return;
@@ -142,13 +154,15 @@ namespace Altimit_v3.Modules
             }
             if (audioInfo.Playing)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     "Player already in another channel please wait for the bot to become available or utilize the channel already in use.");
+                return;
             }
             _audioClient = await audioInfo.Channel.ConnectAsync();
             audioInfo.Playing = true;
-            BotFrame.consoleOut("PLAY");
+            BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Playing...");
+            BotFrame.consoleOut($"{Context.User} PLAY");
             PlaybackLoop(server);
         }
         [Command("skip", RunMode = RunMode.Async)]
@@ -160,11 +174,12 @@ namespace Altimit_v3.Modules
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
             if (audioInfo == null || !audioInfo.Playing)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     $"No track playing, try using ``{(char)server.Prefix}playlist`` and ``{(char)server.Prefix}remove (int)track`` to remove a track.");
                 return;
             }
+            BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Skipping current track...");
             BotFrame.consoleOut($"{Context.User} SKIP");
             audioInfo.Interrupt = true;
             audioInfo.ffmpeg.Kill();
@@ -178,14 +193,15 @@ namespace Altimit_v3.Modules
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
             if (audioInfo == null || !audioInfo.Playing)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     "No track playing!");
                 return;
             }
             audioInfo.Playing = false;
-            BotFrame.consoleOut("Stopping playback!");
-            await audioInfo.Channel.DisconnectAsync();
+            audioInfo.ffmpeg.Kill();
+            BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Stopping playback...");
+            BotFrame.consoleOut($"{Context.User} STOP");
         }
         [Command("leave", RunMode = RunMode.Async)]
         public async Task LeaveChannel()
@@ -196,11 +212,13 @@ namespace Altimit_v3.Modules
             var audioInfo = _main.AudioInfo.FirstOrDefault(x => x.Server == server.ServerId);
             if (audioInfo == null)
             {
-                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Audio",
                     $"Not in voice channel!");
                 return;
             }
+            BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit Audio", $"Leaving voice channel...");
+            BotFrame.consoleOut($"{Context.User} LEAVE");
             await audioInfo.Channel.DisconnectAsync();
         }
         //-----playback loop----------------------------------------------------------------------------------------------------------------------------------------

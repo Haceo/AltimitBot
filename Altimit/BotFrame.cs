@@ -140,8 +140,7 @@ namespace Altimit_v3
         Percent = '%',
         Carrot = '^',
         Ampersand = '&',
-        Astrisk = '*',
-        Forwardslash = '/'
+        Astrisk = '*'
     }
     public class DiscordServer
     {
