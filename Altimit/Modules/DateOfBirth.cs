@@ -59,7 +59,7 @@ namespace Altimit_v3.Modules
             };
             if (today.Year - birthday.Year >= 18 && birthday.Year > 1940 && birthday.Year < today.Year)
             {
-                if (birthday.Month == today.Month)
+                if (birthday.Year == 18 && birthday.Month == today.Month)
                 {
                     //close warn
                     newUser.Flagged = true;
