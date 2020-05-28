@@ -74,7 +74,7 @@ namespace Altimit_v3.Modules
                     await BotFrame.EmbedWriter(adminChan, context.User,
                         "Altimit",
                         $"{adminRole.Mention} The DOB provided by {context.User} matched my records and they were not flagged for any reason.{Environment.NewLine}" +
-                        $"{server.MemberRole} access granted.", time: -1);
+                        $"{context.Guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole)} access granted.", time: -1);
                     return;
                 }
             }
