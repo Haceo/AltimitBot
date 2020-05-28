@@ -14,24 +14,7 @@ namespace Altimit_v3.Modules
         {
             var adminChan = context.Guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel;
             var adminRole = context.Guild.Roles.FirstOrDefault(x => x.Id == server.AdminRole);
-            var user = server.UserInfoList.FirstOrDefault(x => x.UserId == context.User.Id);
-            if (user != null)
-            {
-                await BotFrame.EmbedWriter(context.Channel, context.User,
-                    "Altimit",
-                    "You have already submited a birthdate to this server!" + Environment.NewLine +
-                    "Admins have been notified and will handle your situation as soon as possible.",
-                    image: false, direct: true);
-                await BotFrame.EmbedWriter(adminChan, context.User,
-                    "Altimit",
-                    $"{adminRole.Mention} A user is trying to enter DOB and already has an entry...{Environment.NewLine}" +
-                    $"Username: {user.UserName}{Environment.NewLine}" +
-                    $"User ID: {user.UserId}{Environment.NewLine}" +
-                    $"Birthday: {user.Birthday}{Environment.NewLine}" +
-                    $"Submited: {user.Submitted}{Environment.NewLine}" +
-                    $"Flagged: {user.Flagged} Reason: {user.Status}", time: -1);
-                return;
-            }
+            var guildUser = context.Guild.Users.FirstOrDefault(x => x.Id == context.User.Id);
             Regex rx = new Regex(@"([12][09][0-9][0-9])\W(1[0-2]|0[1-9]|[1-9])\W(3[01]|2[0-9]|1[0-9]|0[1-9]|[1-9])");//format G1(YYYY)G2(MM)G3(DD)
             MatchCollection matches = rx.Matches(context.Message.Content.Trim());
             if (matches.Count == 0)
@@ -50,6 +33,51 @@ namespace Altimit_v3.Modules
                 int.Parse(matches[0].Groups[2].ToString()),
                 int.Parse(matches[0].Groups[3].ToString()));
             DateTime today = DateTime.Now;
+            var user = server.UserInfoList.FirstOrDefault(x => x.UserId == context.User.Id);
+            if (user != null)
+            {
+                await BotFrame.EmbedWriter(adminChan, context.User,
+                    "Altimit",
+                    $"{adminRole.Mention} A user is trying to enter DOB {context.Message} and already has an entry...{Environment.NewLine}" +
+                    $"Username: {user.UserName}{Environment.NewLine}" +
+                    $"User ID: {user.UserId}{Environment.NewLine}" +
+                    $"Birthday: {user.Birthday}{Environment.NewLine}" +
+                    $"Submited: {user.Submitted}{Environment.NewLine}" +
+                    $"Flagged: {user.Flagged} Reason: {user.Status}", time: -1);
+                if (user.Flagged || birthday != user.Birthday)
+                {
+                    string OutwardReason = "";
+                    if (user.Flagged)
+                        OutwardReason = OutwardReason + $"You have been flagged in the system!{Environment.NewLine}";
+                    if (birthday != user.Birthday)
+                        OutwardReason = OutwardReason + $"You have submitted info that does not match info on file!{Environment.NewLine}";
+                    await BotFrame.EmbedWriter(context.Channel, context.User,
+                        "Altimit",
+                        "You have already submited your info to this server!" + Environment.NewLine +
+                        OutwardReason +
+                        "Admins have been notified and will handle your situation as soon as possible.",
+                        image: false, direct: true);
+                    return;
+                }
+                else if (!user.Flagged && birthday == user.Birthday)
+                {
+                    if (server.MemberRole != 0)
+                    {
+                        var addRole = context.Guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole);
+                        await guildUser.AddRoleAsync(addRole);
+                    }
+                    if (server.NewUserRole != 0)
+                    {
+                        var removeRole = context.Guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole);
+                        await guildUser.RemoveRoleAsync(removeRole);
+                    }
+                    await BotFrame.EmbedWriter(adminChan, context.User,
+                        "Altimit",
+                        $"{adminRole.Mention} The DOB provided by {context.User} matched my records and they were not flagged for any reason.{Environment.NewLine}" +
+                        $"{server.MemberRole} access granted.", time: -1);
+                    return;
+                }
+            }
             UserInfo newUser = new UserInfo()
             {
                 UserName = context.User.ToString(),
@@ -79,7 +107,6 @@ namespace Altimit_v3.Modules
                     newUser.Flagged = false;
                     newUser.Status = UserStatus.Accepted;
                 }
-                var guildUser = context.Guild.Users.FirstOrDefault(x => x.Id == context.User.Id);
                 if (server.MemberRole != 0)
                 {
                     var addRole = context.Guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole);
