@@ -195,6 +195,7 @@ namespace Altimit_v3
             }
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
+                ExclusiveBulkDelete = true,
                 LogLevel = LogSeverity.Verbose
             });
             _client.Log += Log;

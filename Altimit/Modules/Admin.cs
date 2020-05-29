@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -68,9 +69,95 @@ namespace Altimit_v3.Modules
                     $"Status: {userInfo.Status}{Environment.NewLine}{Environment.NewLine}";
             }
             await BotFrame.EmbedWriter(Context.Channel, Context.User,
-                "Altimit",
+                "Altimit Admin",
                 $"User(s) found using info type {searchBy}: {info}:{Environment.NewLine}{outputString}",
                 time: time);
+        }
+
+        [Command("clean", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
+        public async Task ClearMessages(int count, ulong userId = 0, ITextChannel chan = null)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var user = Context.Guild.Users.FirstOrDefault(x => x.Id == userId);
+            chan = chan ?? (ITextChannel)Context.Channel;
+            bool loop = true;
+            IEnumerable<IMessage> messages = null;
+            if (count <= 100 && count > 0)
+            {
+                List<ulong> remMsgs = new List<ulong>();
+                while (loop)
+                {
+                    ulong last = 0;
+                    if (messages != null)
+                        last = messages.Last().Id;
+                    if (last == 0)
+                        messages = await chan.GetMessagesAsync().FlattenAsync();
+                    else
+                        messages = await chan.GetMessagesAsync(last, Direction.Before).FlattenAsync();
+                    if (userId == 0)
+                        foreach (var message in messages)
+                        {
+                            if (remMsgs.Count < count)
+                                remMsgs.Add(message.Id);
+                        }
+                    else
+                        foreach (var message in messages.Where(x => x.Author.Id == userId))
+                            if (remMsgs.Count < count)
+                                remMsgs.Add(message.Id);
+                    if (remMsgs.Count() == count || messages.Count() != 100)
+                        loop = false;
+                }
+                await chan.DeleteMessagesAsync(remMsgs);
+                if (userId == 0)
+                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                        "Altimit Admin",
+                        $"Deleted {remMsgs.Count()} messages in channel {chan.Mention}", time: 5000);
+                else
+                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                        "Altimit Admin",
+                        $"Found and deleted {remMsgs.Count} messages from {user} in channel {chan.Mention}", time: 5000);
+                return;
+            }
+            else if (count > 100)
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"You have exceeded the message GET limit, you may only choose to delete 100 messages at a time!", time: 5000);
+            else if (count < 0)
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"Please select a positive integer!", time: 5000);
+        }
+        [Command("count", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
+        public async Task MessageCount(ulong userId = 0, ISocketMessageChannel channel = null)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            channel = channel ?? Context.Channel;
+            int msgCount = 0;
+            bool loop = true;
+            IEnumerable<IMessage> messages = null;
+            while (loop)
+            {
+                ulong last = 0;
+                if (messages != null)
+                    last = messages.Last().Id;
+                if (last == 0)
+                    messages = await channel.GetMessagesAsync().FlattenAsync();
+                else
+                    messages = await channel.GetMessagesAsync(last, Direction.Before).FlattenAsync();
+                if (messages.Count() != 100)
+                    loop = false;
+                if (userId == 0)
+                    msgCount += messages.Count();
+                else
+                    msgCount += messages.Where(x => x.Author.Id == userId).Count();
+            }
+            await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                "Altimit Admin",
+                $"Message count: {msgCount}", time: 5000);
         }
     }
 }
