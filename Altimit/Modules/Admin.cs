@@ -84,7 +84,7 @@ namespace Altimit_v3.Modules
             chan = chan ?? (ITextChannel)Context.Channel;
             bool loop = true;
             IEnumerable<IMessage> messages = null;
-            if (count <= 100 && count > 0)
+            if (count <= 100 && count >= 0)
             {
                 List<ulong> remMsgs = new List<ulong>();
                 while (loop)
@@ -124,7 +124,7 @@ namespace Altimit_v3.Modules
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Admin",
                     $"You have exceeded the message GET limit, you may only choose to delete 100 messages at a time!", time: 5000);
-            else if (count < 0)
+            else if (count <= 0)
                 await BotFrame.EmbedWriter(Context.Channel, Context.User,
                     "Altimit Admin",
                     $"Please select a positive integer!", time: 5000);
