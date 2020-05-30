@@ -36,6 +36,7 @@ namespace Altimit_v3
             else
             {
                 submitedDatePicker.SelectedDate = DateTime.Now;
+                statusComboBox.SelectedItem = UserStatus.NA;
             }
         }
         private void Save_Click(object sender, RoutedEventArgs e)

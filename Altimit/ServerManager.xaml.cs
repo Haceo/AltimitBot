@@ -101,11 +101,18 @@ namespace Altimit_v3
                 {
                     UserId = ulong.Parse(ue.userIdBox.Text),
                     UserName = ue.userNameBox.Text,
-                    Birthday = ue.birthdayDatePicker.SelectedDate.Value,
-                    Submitted = ue.submitedDatePicker.SelectedDate.Value,
                     Flagged = ue.isFlagged.IsChecked.Value,
                     Status = (UserStatus)ue.statusComboBox.SelectedItem
                 };
+
+                if (ue.birthdayDatePicker.SelectedDate.Value != null)
+                    newUser.Birthday = ue.birthdayDatePicker.SelectedDate.Value;
+                else
+                    newUser.Birthday = DateTime.Now;
+                if (ue.submitedDatePicker.SelectedDate.Value != null)
+                    newUser.Submitted = ue.submitedDatePicker.SelectedDate.Value;
+                else
+                    newUser.Submitted = DateTime.Now;
                 if (_server.UserInfoList == null)
                     _server.UserInfoList = new List<UserInfo>();
                 _server.UserInfoList.Add(newUser);
