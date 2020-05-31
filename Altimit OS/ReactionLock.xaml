@@ -1,0 +1,34 @@
+﻿<Window x:Class="Altimit_OS.ReactionLock"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Altimit_OS"
+        mc:Ignorable="d"
+        Title="Reaction Lock" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Loaded="WPF_Loaded" Icon="Prompt.ico">
+    <GroupBox Header="Edit Lock" Margin="5">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Channel ID:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox Name="channelIdBox" Grid.Row="0" Grid.Column="1" Width="135" Margin="5"/>
+            <Label Content="Message ID:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox Name="messageIdBox" Grid.Row="1" Grid.Column="1" Width="135" Margin="5"/>
+            <Label Content="Emote ID:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox Name="emoteIdBox" Grid.Row="2" Grid.Column="1" Width="135" Margin="5"/>
+            <Label Content="Role ID:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox Name="awardRoleIdBox" Grid.Row="3" Grid.Column="1" Width="135" Margin="5"/>
+            <Button Content="Save" Grid.Row="4" Grid.Column="0" Width="100" Margin="5" IsDefault="True" Click="Save_Click"/>
+            <Button Content="Cancel" Grid.Row="4" Grid.Column="1" Width="100" Margin="5" IsCancel="True" Click="Cancel_Click"/>
+        </Grid>
+    </GroupBox>
+</Window>
