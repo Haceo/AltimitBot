@@ -160,6 +160,7 @@ namespace Altimit_OS
         public string ServerJoined { get; set; }
         public List<UserInfo> UserInfoList { get; set; }
         public List<ReactionLockItem> ReactionLockList { get; set; }
+        //public List<Poll> PollList { get; set; }
         public List<TimeoutMember> TimeoutList { get; set; }
         public List<Song> SongList { get; set; }
         public int MaxLength { get; set; }
@@ -216,7 +217,20 @@ namespace Altimit_OS
         public ulong Message { get; set; }
         public string Emote { get; set; }
         public ulong Role { get; set; }
+    }/*
+    public class Poll
+    {
+        public ulong Channel { get; set; }
+        public ulong Message { get; set; }
+        public ulong User { get; set; }
+        public DateTime Started { get; set; }
+        public string Question { get; set; }
     }
+    public class Option
+    {
+        public string Answer { get; set; }
+        public IEmote Emote { get; set; }
+    }*/
     public class TimeoutMember
     {
         public ulong UserId { get; set; }

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -54,6 +55,7 @@ namespace Altimit_OS
             CommandHandler._main = this;
             Modules.Audio._main = this;
             Modules.Admin._main = this;
+            Modules.Misc._main = this;
             BotFrame.LoadFile("config");
             BotFrame.LoadFile("servers");
             if (BotFrame.config.Token != null || BotFrame.config.Token == "")
