@@ -168,6 +168,7 @@ namespace Altimit_OS
         public int MaxLength { get; set; }
         public bool Continuous { get; set; }
         public bool LoopOne { get; set; }
+        public bool OwO { get; set; }
     }
     public class Song
     {

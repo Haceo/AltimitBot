@@ -165,8 +165,10 @@ namespace Altimit_OS.Modules
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
-            string[] roleSplit = roles.Split(',');
-            switch (option)
+            string[] roleSplit = null;
+            if (roles != "")
+                roleSplit = roles.Split(',');
+            switch (option.ToLower())
             {
                 case "count":
                     if (roles == "")
@@ -233,6 +235,21 @@ namespace Altimit_OS.Modules
                     await BotFrame.EmbedWriter(Context.Channel, Context.User,
                         "Altimit Admin",
                         membersString);
+                    break;
+                case "none":
+                    string outNone = "";
+                    foreach (var user in Context.Guild.Users.Where(x => x.Roles.Count <= 1))
+                        outNone += $"{user} Joined: {user.JoinedAt}";
+                    if (outNone == "")
+                    {
+                        await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            "Altimit Admin",
+                            $"Sorry no users found without any roles.");
+                        return;
+                    }
+                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            "Altimit Admin",
+                            $"Users found with no role:{Environment.NewLine}{outNone}");
                     break;
             }
         }

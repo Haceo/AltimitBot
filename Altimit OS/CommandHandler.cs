@@ -105,8 +105,11 @@ namespace Altimit_OS
                 var guildRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.Role);
                 if (guildRole == null)
                     return;
-                BotFrame.consoleOut($"Adding role @{guildRole} to user {user} in server {guildChannel.Guild.Name}");
-                await user.AddRoleAsync(guildRole);
+                if (!user.Roles.Contains(guildRole))
+                {
+                    BotFrame.consoleOut($"Adding role @{guildRole} to user {user} in server {guildChannel.Guild.Name}");
+                    await user.AddRoleAsync(guildRole);
+                }
             }
         }
         private async Task MessageReceivedHandler(SocketMessage msg)
