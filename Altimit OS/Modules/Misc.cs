@@ -17,15 +17,39 @@ namespace Altimit_OS.Modules
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
-            var adminRole = await ParseRole(Context, _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id).AdminRole.ToString());
             string outString = "";
-            string[] splitRoles = roles.Split(',');
-            List<SocketGuildUser> entries = new List<SocketGuildUser>();
-            foreach (var role in splitRoles)
+            string[] splitRoles;
+            string[] entryRoles = null;
+            string[] excludeRoles = null;
+            if (roles.Contains('/'))
             {
-                var rawRole = await ParseRole(Context, role);
-                foreach (var user in Context.Guild.Users.Where(x => x.Roles.Contains(rawRole) && !x.Roles.Contains(adminRole)))
-                    entries.Add(user);
+                splitRoles = roles.Split('/');
+                entryRoles = splitRoles[0].Split(',');
+                excludeRoles = splitRoles[1].Split(',');
+            }
+            else
+                entryRoles = roles.Split(',');
+            List<SocketGuildUser> entries = new List<SocketGuildUser>();
+            foreach (var role in entryRoles)
+            {
+                var rawRole = await ParseRole(Context, role.Trim());
+                foreach (var user in Context.Guild.Users.Where(x => x.Roles.Contains(rawRole)))
+                {
+                    if (excludeRoles != null)
+                    {
+                        bool isExcluded = false;
+                        foreach (var exclude in excludeRoles)
+                        {
+                            var rawExclude = await ParseRole(Context, exclude.Trim());
+                            if (user.Roles.Contains(rawExclude))
+                                isExcluded = true;
+                        }
+                        if (!isExcluded)
+                            entries.Add(user);
+                    }
+                    else
+                        entries.Add(user);
+                }
             }
             if (entries.Count == 0)
             {
