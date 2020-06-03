@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -21,6 +20,7 @@ namespace Altimit_OS
     {
         public static DiscordSocketClient _client;
         static CommandHandler _handler;
+        public bool loading = false;
         public List<AudioContainer> AudioInfo = new List<AudioContainer>();
         public event PropertyChangedEventHandler PropertyChanged;
         private string consoleString;
@@ -189,6 +189,11 @@ namespace Altimit_OS
         //-----Connection----
         private async Task Connect()
         {
+            if (loading)
+            {
+                MessageBox.Show(this, "The bot is loading a file and cannot connect safely, there may be a corruption issue within the file, please review system files and try to load again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             connectionButton.Content = "Connecting...";
             if (BotFrame.config.Token == null || BotFrame.config.Token == "")
             {

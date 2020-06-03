@@ -22,7 +22,7 @@ namespace Altimit_OS.Modules
                 BotFrame.consoleOut($"Deleted message from: {context.User} In channel: {context.Channel}{Environment.NewLine}" +
                     $"Message: {context.Message.Content}");
                 await BotFrame.EmbedWriter(context.Channel, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     "Check formatting and try again!" + Environment.NewLine +
                     "Format is: Year Month Day" + Environment.NewLine +
                     $"Example: {DateTime.Now.Year}/{DateTime.Now.Month}/{DateTime.Now.Day}", time: 10000);
@@ -37,7 +37,7 @@ namespace Altimit_OS.Modules
             if (user != null)
             {
                 await BotFrame.EmbedWriter(adminChan, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     $"{adminRole.Mention} A user is trying to enter DOB {context.Message} and already has an entry...{Environment.NewLine}" +
                     $"Username: {user.UserName}{Environment.NewLine}" +
                     $"User ID: {user.UserId}{Environment.NewLine}" +
@@ -52,7 +52,7 @@ namespace Altimit_OS.Modules
                     if (birthday != user.Birthday)
                         OutwardReason = OutwardReason + $"You have submitted info that does not match info on file!{Environment.NewLine}";
                     await BotFrame.EmbedWriter(context.Channel, context.User,
-                        "Altimit",
+                        "Altimit DOB",
                         "You have already submited your info to this server!" + Environment.NewLine +
                         OutwardReason +
                         "Admins have been notified and will handle your situation as soon as possible.",
@@ -72,7 +72,7 @@ namespace Altimit_OS.Modules
                         await guildUser.RemoveRoleAsync(removeRole);
                     }
                     await BotFrame.EmbedWriter(adminChan, context.User,
-                        "Altimit",
+                        "Altimit DOB",
                         $"{adminRole.Mention} The DOB provided by {context.User} matched my records and they were not flagged for any reason.{Environment.NewLine}" +
                         $"{context.Guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole)} access granted.", time: -1);
                     return;
@@ -93,7 +93,7 @@ namespace Altimit_OS.Modules
                     newUser.Flagged = true;
                     newUser.Status = UserStatus.Close;
                     await BotFrame.EmbedWriter(adminChan, context.User,
-                        "Altimit",
+                        "Altimit DOB",
                         $"{adminRole.Mention} User turned 18 within the last month!{Environment.NewLine}" +
                         $"Username: {newUser.UserName}{Environment.NewLine}" +
                         $"User ID: {newUser.UserId}{Environment.NewLine}" +
@@ -124,12 +124,12 @@ namespace Altimit_OS.Modules
                 newUser.Flagged = true;
                 newUser.Status = UserStatus.Underage;
                 await BotFrame.EmbedWriter(context.Channel, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     $"You have entered a date that shows you are underage!{Environment.NewLine}" +
                     $"Admins have been notified!",
                     image: false, direct: true);
                 await BotFrame.EmbedWriter(adminChan, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     $"{adminRole.Mention} User is underage!{Environment.NewLine}" +
                     $"Username: {newUser.UserName}{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
@@ -143,12 +143,12 @@ namespace Altimit_OS.Modules
                 newUser.Flagged = true;
                 newUser.Status = UserStatus.Overage;
                 await BotFrame.EmbedWriter(context.Channel, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     $"You have entered a questionably old date of birth!{Environment.NewLine}" +
                     $"Admins have been notified!",
                     image: false, direct: true);
                 await BotFrame.EmbedWriter(adminChan, context.User,
-                    "Altimit",
+                    "Altimit DOB",
                     $"{adminRole.Mention} User has entered a questionably old age!{Environment.NewLine}" +
                     $"Username: {newUser.UserName}{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +

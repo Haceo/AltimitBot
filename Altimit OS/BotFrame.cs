@@ -19,6 +19,7 @@ namespace Altimit_OS
 
         public static async Task LoadFile(string file)
         {
+            _main.loading = true;
             if (!Check(file))
             {
                 consoleOut($"File {file} not found!");
@@ -42,6 +43,7 @@ namespace Altimit_OS
                         break;
                 }
             }
+            _main.loading = false;
         }
         public static async Task SaveFile(string file)
         {
