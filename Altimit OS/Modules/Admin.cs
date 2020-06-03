@@ -238,7 +238,7 @@ namespace Altimit_OS.Modules
                     break;
                 case "none":
                     string outNone = "";
-                    foreach (var user in Context.Guild.Users.Where(x => x.Roles.Count <= 1))
+                    foreach (var user in Context.Guild.Users.Where(x => x.Roles.Count == 1))
                         outNone += $"{user} Joined: {user.JoinedAt}";
                     if (outNone == "")
                     {
