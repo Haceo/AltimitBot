@@ -44,10 +44,10 @@ namespace Altimit_OS.Modules
                             if (user.Roles.Contains(rawExclude))
                                 isExcluded = true;
                         }
-                        if (!isExcluded)
+                        if (!isExcluded && !entries.Contains(user))
                             entries.Add(user);
                     }
-                    else
+                    else if (!entries.Contains(user))
                         entries.Add(user);
                 }
             }
