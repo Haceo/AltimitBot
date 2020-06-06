@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 
 namespace Altimit_OS.Modules
@@ -211,6 +215,7 @@ namespace Altimit_OS.Modules
                             $"You must specify at least one role to use role members!", time: 10000);
                         return;
                     }
+                    DateTimeOffset today = new DateTimeOffset(DateTime.Now);
                     string membersString = $"Listing role members:{Environment.NewLine}";
                     foreach (var role in roleSplit)
                     {
@@ -226,15 +231,25 @@ namespace Altimit_OS.Modules
                         {
                             outRole = parseRole.Mention;
                             foreach (var member in parseRole.Members)
-                                members = $"{members}{member}{Environment.NewLine}";
+                                members += $"{member} {today.Subtract((DateTimeOffset)member.JoinedAt).Days} days ago.{Environment.NewLine}";
                         }
                         if (members == "")
                             members = "No members found with this role!";
                         membersString = $"{membersString}{outRole}:{Environment.NewLine}{members}{Environment.NewLine}";
                     }
-                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
-                        "Altimit Admin",
-                        membersString);
+                    if (membersString.Length < 2048)
+                        await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            "Altimit Admin",
+                            membersString);
+                    else
+                    {
+                        File.WriteAllText("RoleMembers.txt", membersString);
+                        BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            "Altimit Admin",
+                            $"List too large, outputting to file below!{Environment.NewLine}Note: Roles will be in ID format.");
+                        await Context.Channel.SendFileAsync("RoleMembers.txt");
+                        File.Delete("RoleMembers.txt");
+                    }
                     break;
                 case "none":
                     string outNone = "";
@@ -251,6 +266,58 @@ namespace Altimit_OS.Modules
                             "Altimit Admin",
                             $"Users found with no role:{Environment.NewLine}{outNone}");
                     break;
+            }
+        }
+        [Command("prune", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.KickMembers)]
+        public async Task Prune(int days, string role = "")
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            DateTimeOffset today = new DateTimeOffset(DateTime.Now);
+            SocketRole rawRole = null;
+            if (role == "")
+                rawRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole);
+            else
+                rawRole = await ParseRole(Context, role);
+            if (rawRole == null)
+                return;
+            foreach (var user in Context.Guild.Users.Where(x => x.Roles.Count == 1 && x.Roles.Contains(rawRole) && today.Subtract((DateTimeOffset)x.JoinedAt).Days >= days))
+            {
+                string invite = null;
+                RestInviteMetadata res = null;
+                try
+                {
+                    res = await Context.Guild.GetVanityInviteAsync();
+                }
+                catch (Exception ex)
+                {
+                    res = null;
+                }
+                if (res != null)
+                    invite = res.Url;
+                else
+                {
+                    IReadOnlyCollection<RestInviteMetadata> invites;
+                    try
+                    {
+                        invites = await Context.Guild.GetInvitesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        invites = null;
+                    }
+                    if (invites != null)
+                        invite = invites.FirstOrDefault(x => !x.IsRevoked && !x.IsTemporary && x.Uses < x.MaxUses).Url;
+                    else
+                        invite = "No invite found";
+                }    
+                int count = today.Subtract((DateTimeOffset)user.JoinedAt).Days;
+                await user.SendMessageAsync($"We're sorry but you have been kicked from {Context.Guild.Name} as you have been unverified for {count} days.{Environment.NewLine}" +
+                    $"If you would like to rejoin in the future and submit for verification you are welcome at {invite}");
+                await user.KickAsync();
+                await Task.Delay(5000);
             }
         }
         private async Task<SocketRole> ParseRole(SocketCommandContext context, string role)
