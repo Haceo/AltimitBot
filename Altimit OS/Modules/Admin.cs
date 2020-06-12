@@ -296,7 +296,7 @@ namespace Altimit_OS.Modules
                 roleString += $"{role.Mention}{Environment.NewLine}";
             BotFrame.EmbedWriter(Context.Channel, Context.User,
                 "Altimit Admin",
-                $"User {guildUser} found!{Environment.NewLine}" +
+                $"User {guildUser.Mention} found!{Environment.NewLine}" +
                 $"Discord stats:{Environment.NewLine}" +
                 $"Time in server: {today.Subtract((DateTimeOffset)guildUser.JoinedAt).Days} days{Environment.NewLine}" +
                 $"Roles:{Environment.NewLine}" +
