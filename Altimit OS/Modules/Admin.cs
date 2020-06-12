@@ -268,6 +268,40 @@ namespace Altimit_OS.Modules
                     break;
             }
         }
+        [Command("stats", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageRoles)]
+        public async Task Stats(string input, int time = -1)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            ulong userid;
+            SocketGuildUser guildUser;
+            var res = ulong.TryParse(input, out userid);
+            if (res)
+                guildUser = Context.Guild.Users.FirstOrDefault(x => x.Id == userid);
+            else if (!input.Contains('#'))
+                guildUser = Context.Guild.Users.FirstOrDefault(x => x.Username.ToLower() == input.ToLower());
+            else
+                guildUser = Context.Guild.Users.FirstOrDefault(x => x.ToString().ToLower() == input.ToLower());
+            if (guildUser == null)
+            {
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"User matching input: {input} was not found or does not exist as written.");
+                return;
+            }
+            DateTimeOffset today = new DateTimeOffset(DateTime.Now);
+            string roleString = "";
+            foreach (SocketRole role in guildUser.Roles.Where(x => !x.IsEveryone))
+                roleString += $"{role.Mention}{Environment.NewLine}";
+            BotFrame.EmbedWriter(Context.Channel, Context.User,
+                "Altimit Admin",
+                $"User {guildUser} found!{Environment.NewLine}" +
+                $"Discord stats:{Environment.NewLine}" +
+                $"Time in server: {today.Subtract((DateTimeOffset)guildUser.JoinedAt).Days} days{Environment.NewLine}" +
+                $"Roles:{Environment.NewLine}" +
+                $"{roleString}", time: time);
+        }
         [Command("prune", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.KickMembers)]
         public async Task Prune(int days, string role = "")

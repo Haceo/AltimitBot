@@ -48,7 +48,7 @@ namespace Altimit_OS.Modules
                 {
                     string OutwardReason = "";
                     if (user.Flagged)
-                        OutwardReason = OutwardReason + $"You have been flagged in the system!{Environment.NewLine}Reason: {user.Status}";
+                        OutwardReason = OutwardReason + $"You have been flagged in the system!{Environment.NewLine}Reason: {user.Status}{Environment.NewLine}";
                     if (birthday != user.Birthday)
                         OutwardReason = OutwardReason + $"You have submitted info that does not match info on file!{Environment.NewLine}";
                     await BotFrame.EmbedWriter(context.Channel, context.User,
