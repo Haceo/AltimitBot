@@ -212,7 +212,8 @@ namespace Altimit_OS
         Underage,
         Overage,
         Close,
-        Banned
+        Banned,
+        SuspiciousDate
     }
     public class ReactionLockItem
     {
