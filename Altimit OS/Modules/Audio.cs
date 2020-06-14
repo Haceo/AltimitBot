@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Discord;
 using Discord.Audio;
 using Discord.Commands;
+using Discord.WebSocket;
 
 namespace Altimit_OS.Modules
 {
@@ -47,7 +48,8 @@ namespace Altimit_OS.Modules
                         }
                         if (sec > 30)
                             min++;
-                        if (server.MaxLength < min)
+                        var res = (Context.User as SocketGuildUser).Roles.FirstOrDefault(x => x.Id == server.AdminRole);
+                        if (server.MaxLength < min && res == null)
                         {
                             await Context.Channel.DeleteMessageAsync(msg);
                             await BotFrame.EmbedWriter(Context.Channel, Context.User,
