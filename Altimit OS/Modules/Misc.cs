@@ -4,7 +4,11 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Altimit_OS.Modules
 {
@@ -88,8 +92,89 @@ namespace Altimit_OS.Modules
                 return context.Guild.Roles.FirstOrDefault(x => x.Id == foundRole);
             else
                 return context.Guild.Roles.FirstOrDefault(x => x.Name.ToLower() == role.ToLower());
+        }/*
+        [Command("poll", RunMode = RunMode.Async)]
+        public async Task PollStart(string question, [Remainder]string options = "")
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            ulong message;
+            bool res = ulong.TryParse(question, out message);
+            if (res)
+            {
+                //end poll
+                var getMsg = Context.Channel.GetMessageAsync(message).Result;
+                if (getMsg == null)
+                {
+                    BotFrame.EmbedWriter(Context.Channel, Context.User,
+                        "Altimit Poll",
+                        $"No poll found with message ID: {question}! Please check you are in the correct channel.");
+                    return;
+                }
+                if (Context.User.ToString() != getMsg.Embeds.First().Footer.ToString().Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries)[1])
+                {
+                    await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                        "Altimit Poll",
+                        $"You do not have permission to end a poll you did not make yourself!");
+                    return;
+                }
+                DateTimeOffset today = new DateTimeOffset(DateTime.Now);
+                var embedAnswers = getMsg.Embeds.First().Description.Split('\n');
+                List<IEmote> choiceList = new List<IEmote>();
+                var rawReactions = getMsg.Reactions.Where(x => !x.Value.IsMe);//this works
+                for (var i = 1; i < embedAnswers.Length; i++)
+                {
+                    //VV---------Issues----------------VV
+                    string[] split = embedAnswers[i].Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
+                    Emote emote;
+                    res = Emote.TryParse(split[0].Trim(), out emote);
+                    if (res)
+                        choiceList.Add(emote);
+                    else
+                        choiceList.Add(new Emoji(split[0].Trim()));
+                }
+                //await Context.Channel.DeleteMessageAsync(getMsg);
+                return;
+            }
+            string[] op = options.Split(';');
+            if (op.Length <= 1)
+            {
+                //poll needs more than 1 answer
+                return;
+            }
+            List<Tuple<string, IEmote>> optionList = new List<Tuple<string, IEmote>>();
+            foreach (var option in op)
+            {
+                string[] split = option.Split(',');
+                Emote emote;
+                res = Emote.TryParse(split[1].Trim(), out emote);
+                if (res)
+                    optionList.Add(new Tuple<string, IEmote>(split[0].Trim(), emote));
+                else
+                    optionList.Add(new Tuple<string, IEmote>(split[0].Trim(), new Emoji(split[1].Trim())));
+            }
+            string optionsOut = "";
+            foreach (var option in optionList)
+                optionsOut += $"{option.Item2}: {option.Item1}{Environment.NewLine}";
+            var msg = await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                "Altimit Poll",
+                $"{question}{Environment.NewLine}{optionsOut}", time: -1);
+            IMessage iMsg = Context.Channel.GetMessageAsync(msg).Result;
+            foreach (var option in optionList)
+            {
+                await iMsg.AddReactionAsync(option.Item2);
+                await Task.Delay(1000);
+            }
         }
-        /*[Command("poll")]
+        [Command("test")]
+        public async Task test(ulong message)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            IMessage getMsg = (Context.Guild.Channels.FirstOrDefault(x => x.Id == Context.Channel.Id) as ITextChannel).GetMessageAsync(message).Result;
+            BotFrame.consoleOut(getMsg.Reactions.First().Value.ReactionCount.ToString());
+        }*/
+        /*[Command("poll")]//this is the old code
         public async Task Poll(string question, [Remainder]string options)
         {
             await Task.Delay(200);

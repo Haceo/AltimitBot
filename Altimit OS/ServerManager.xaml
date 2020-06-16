@@ -138,6 +138,10 @@
                         <TextBox Name="welcomeChanBox" Grid.Row="2" Grid.Column="1" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
                         <CheckBox Name="dobCheckBox" Content="Welcome DOB" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
                         <CheckBox Name="leaveCheckBox" Content="Welcome for leaves" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+
+                        <Label Content="Black List Channel:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="blacklistChanBox" Grid.Row="3" Grid.Column="1" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
+                        <CheckBox Name="blacklistCheckbox" Content="Use Blacklist" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
                     </Grid>
                 </GroupBox>
             </TabItem>

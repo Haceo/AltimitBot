@@ -24,8 +24,8 @@ namespace Altimit_OS
             _client.UserLeft += UserLeaveHandler;
             _client.ReactionAdded += ReactionAddedHandler;
             _client.MessageReceived += MessageReceivedHandler;
+            _client.UserBanned += UserBannedHandler;
         }
-
         private async Task JoinedGuildHandler(SocketGuild guild)
         {
             DiscordServer saved = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
@@ -89,8 +89,26 @@ namespace Altimit_OS
             if (server.WelcomeChannel != 0 && server.UseWelcomeForLeave)
                 await BotFrame.EmbedWriter(chan, u,
                     "Altimit",
-                    $"{u} has left the server {Environment.NewLine}{Environment.NewLine}{u.Id}",
+                    $"{u.Mention} has left the server",
                     time: -1);
+        }
+        private async Task UserBannedHandler(SocketUser user, SocketGuild guild)
+        {
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
+            var blacklistChannel = guild.Channels.FirstOrDefault(x => x.Id == server.BlacklistChannel) as ISocketMessageChannel;
+            if (blacklistChannel == null && server.UseBlacklist)
+            {
+                BotFrame.consoleOut("No blacklist channel set up");
+                return;
+            }
+            else if (!server.UseBlacklist)
+                return;
+            var ban = guild.GetBanAsync(user).Result;
+            BotFrame.EmbedWriter(blacklistChannel, user,
+                "Altimit Blacklist",
+                $"User {user.Mention} has been banned{Environment.NewLine}" +
+                $"Reason:{Environment.NewLine}" +
+                $"{ban.Reason}", time: -1);
         }
         private async Task ReactionAddedHandler(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {

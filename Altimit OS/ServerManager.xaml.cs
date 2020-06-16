@@ -84,6 +84,8 @@ namespace Altimit_OS
             welcomeChanBox.Text = _server.WelcomeChannel.ToString();
             dobCheckBox.IsChecked = _server.UseWelcomeForDob;
             leaveCheckBox.IsChecked = _server.UseWelcomeForLeave;
+            blacklistChanBox.Text = _server.BlacklistChannel.ToString();
+            blacklistCheckbox.IsChecked = _server.UseBlacklist;
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -266,6 +268,7 @@ namespace Altimit_OS
             ulong botChan;
             ulong dobChan;
             ulong welcomeChan;
+            ulong blacklistChan;
             if (serverPrefixCheckBox.IsChecked == true)
                 _server.Prefix = (PrefixChar)serverPrefixBox.SelectedItem;
             res = ulong.TryParse(adminRoleBox.Text, out adminRole);
@@ -290,6 +293,12 @@ namespace Altimit_OS
                 _server.WelcomeChannel = 0;
             _server.UseWelcomeForDob = dobCheckBox.IsChecked.Value;
             _server.UseWelcomeForLeave = leaveCheckBox.IsChecked.Value;
+            res = ulong.TryParse(blacklistChanBox.Text, out blacklistChan);
+            if (res)
+                _server.BlacklistChannel = blacklistChan;
+            else
+                _server.BlacklistChannel = 0;
+            _server.UseBlacklist = blacklistCheckbox.IsChecked.Value;
             BotFrame.SaveFile("servers");
         }
         private void Close_Click(object sender, RoutedEventArgs e)
