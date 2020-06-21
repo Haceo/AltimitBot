@@ -23,6 +23,7 @@ namespace Altimit_OS
             if (!Check(file))
             {
                 consoleOut($"File {file} not found!");
+                _main.loading = false;
                 return;
             }
             else
@@ -157,6 +158,7 @@ namespace Altimit_OS
         public bool UseBlacklist { get; set; }
         public bool UseWelcomeForLeave { get; set; }
         public bool UseWelcomeForDob { get; set; }
+        public bool UserUpdate { get; set; }
         public ulong AdminRole { get; set; }
         public ulong NewUserRole { get; set; }
         public ulong MemberRole { get; set; }

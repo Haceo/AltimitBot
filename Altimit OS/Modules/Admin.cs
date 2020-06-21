@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using Discord;
 using Discord.Commands;
 using Discord.Rest;
@@ -17,7 +15,7 @@ namespace Altimit_OS.Modules
     {
         public static MainWindow _main;
         [Command("lookup", RunMode = RunMode.Async)]
-        private async Task lookup(string searchBy, string info = "", int time = 20000)
+        public async Task lookup(string searchBy, string info = "", int time = 20000)
         {
             await Task.Delay(200);
             await Context.Channel.DeleteMessageAsync(Context.Message);
@@ -30,7 +28,7 @@ namespace Altimit_OS.Modules
                 return;
             List<UserInfo> outputList = new List<UserInfo>();
             Regex rx = new Regex(@"([12][09][0-9][0-9])\W(1[0-2]|0[1-9]|[1-9])\W(3[01]|2[0-9]|1[0-9]|0[1-9]|[1-9])");//format G1(YYYY)G2(MM)G3(DD)
-            switch (searchBy)
+            switch (searchBy.ToLower())
             {
                 case "userid":
                     foreach (var data in server.UserInfoList.Where(x => x.UserId == ulong.Parse(info)))

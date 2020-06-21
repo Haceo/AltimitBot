@@ -117,7 +117,7 @@ namespace Altimit_OS
         //-----ServerManager-----
         private void ServerRefresh_Click(object sender, RoutedEventArgs e)
         {
-            UpdateView("Server");
+            UpdateView("ServerList");
         }
         private void ServerLoad_Click(object sender, RoutedEventArgs e)
         {
@@ -151,7 +151,7 @@ namespace Altimit_OS
                         server.UserInfoList = new List<UserInfo>();
                     server.UserInfoList.Add(newUser);
                 }
-                BotFrame.consoleOut($"Loaded {loadFile.Count.ToString()} users!");
+                BotFrame.consoleOut($"Loaded {loadFile.Count} users!");
                 BotFrame.SaveFile("servers");
             }
         }
@@ -262,7 +262,7 @@ namespace Altimit_OS
                 if (check == null)
                     savedGuild.Active = false;
             }
-            UpdateView("Server");
+            UpdateView("ServerList");
             BotFrame.SaveFile("servers");
         }
     }

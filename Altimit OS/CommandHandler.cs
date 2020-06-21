@@ -13,7 +13,6 @@ namespace Altimit_OS
         public static MainWindow _main;
         DiscordSocketClient _client;
         CommandService _service;
-
         public async Task InitAsync(DiscordSocketClient client)
         {
             _client = client;
@@ -25,6 +24,7 @@ namespace Altimit_OS
             _client.ReactionAdded += ReactionAddedHandler;
             _client.MessageReceived += MessageReceivedHandler;
             _client.UserBanned += UserBannedHandler;
+            _client.UserUpdated += UserUpdatedHandler;
         }
         private async Task JoinedGuildHandler(SocketGuild guild)
         {
@@ -46,7 +46,7 @@ namespace Altimit_OS
                     _main.ServerList.Add(newServer);
                 });
             }
-            _main.UpdateView("Server");
+            _main.UpdateView("ServerList");
             BotFrame.SaveFile("servers");
         }
         private async Task UserJoinedHandler(SocketGuildUser u)
@@ -60,7 +60,7 @@ namespace Altimit_OS
                 if (server.AdminRole != 0 && server.AdminChannel != 0)
                 {
                     var adminRole = u.Guild.Roles.FirstOrDefault(x => x.Id == server.AdminRole);
-                    await BotFrame.EmbedWriter(u.Guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel, u,
+                    BotFrame.EmbedWriter(u.Guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel, u,
                         "Altimit",
                         $"{adminRole.Mention} User {u} is a bot!",
                         time: -1);
@@ -69,18 +69,34 @@ namespace Altimit_OS
             }
             if (server.NewUserRole != 0)
             {
-            try
-            {
-                await u.AddRoleAsync(u.Guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole));
+                try
+                {
+                    await u.AddRoleAsync(u.Guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole));
+                }
+                catch (Exception ex)
+                {
+                    BotFrame.consoleOut(ex.Message);
+                    return;
+                }
             }
-            catch (Exception ex)
-            {
-                BotFrame.consoleOut(ex.Message);
-                return;
-            }
-                if (server.WelcomeChannel != 0 && server.UseWelcomeForDob)
-                    await (u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel).SendMessageAsync($"Hey {u.Mention}, welcome to **{server.ServerName}**. Please read the rules and enter your date of birth in the {u.Guild.Channels.FirstOrDefault(y => y.Id == server.DOBChannel)}. You must be 18+");
-            }
+            if (server.WelcomeChannel != 0 && server.UseWelcomeForDob)
+                await (u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel).SendMessageAsync($"Hey {u.Mention}, welcome to **{server.ServerName}**. Please read the rules and enter your date of birth in the {u.Guild.Channels.FirstOrDefault(y => y.Id == server.DOBChannel)}. You must be 18+");
+        }
+        private async Task UserUpdatedHandler(SocketUser newUser, SocketUser oldUser)
+        {
+            var guilds = newUser.MutualGuilds;
+            if (newUser.ToString() != oldUser.ToString())
+                foreach (var guild in guilds)
+                {
+                    var server = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
+                    if (server.AdminChannel != 0 && server.UserUpdate)
+                    {
+                        var adminChan = guild.Channels.FirstOrDefault(x => x.Id == server.AdminChannel) as ISocketMessageChannel;
+                        BotFrame.EmbedWriter(adminChan, newUser,
+                            "Altimit",
+                            $"User:{Environment.NewLine}{oldUser}{Environment.NewLine}has changed their name to{Environment.NewLine}{newUser}", time: -1);
+                    }
+                }
         }
         private async Task UserLeaveHandler(SocketGuildUser u)
         {
@@ -157,6 +173,7 @@ namespace Altimit_OS
                     }
                     if (!res.IsSuccess && res.Error == CommandError.UnknownCommand)
                     {
+                        await Task.Delay(200);
                         await message.DeleteAsync();
                         BotFrame.consoleOut("Unknown command! Deleted message from user: " + context.User.Username + " in channel " + context.Channel.Name + Environment.NewLine +
                             "Message: " + message.Content);
