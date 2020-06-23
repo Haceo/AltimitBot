@@ -26,8 +26,8 @@ namespace Altimit_OS
                 RaisePropertyChanged("SongList");
             }
         }
-        private ObservableCollection<ReactionLockItem> lockList = new ObservableCollection<ReactionLockItem>();
-        public ObservableCollection<ReactionLockItem> LockList
+        private ObservableCollection<ReactionLock> lockList = new ObservableCollection<ReactionLock>();
+        public ObservableCollection<ReactionLock> LockList
         {
             get { return lockList; }
             set
@@ -46,6 +46,16 @@ namespace Altimit_OS
                 RaisePropertyChanged("UserList");
             }
         }
+        private ObservableCollection<Streamer> streamerList = new ObservableCollection<Streamer>();
+        public ObservableCollection<Streamer> StreamerList
+        {
+            get { return streamerList; }
+            set
+            {
+                streamerList = value;
+                RaisePropertyChanged("StreamerList");
+            }
+        }
         public ServerManager()
         {
             InitializeComponent();
@@ -61,6 +71,10 @@ namespace Altimit_OS
             newUserRoleIdBox.Text = _server.NewUserRole.ToString();
             memberRoleIdBox.Text = _server.MemberRole.ToString();
             adminLogChanBox.Text = _server.AdminChannel.ToString();
+            //-----Streamers----------------------------------
+            if (_server.StreamerList != null)
+                foreach (var streamer in _server.StreamerList)
+                    StreamerList.Add(streamer);
             //-----Reaction Locks-----------------------------
             if (_server.ReactionLockList != null)
                 foreach (var reactionLock in _server.ReactionLockList)
@@ -87,6 +101,9 @@ namespace Altimit_OS
             blacklistChanBox.Text = _server.BlacklistChannel.ToString();
             blacklistCheckbox.IsChecked = _server.UseBlacklist;
             userUpdateCheckbox.IsChecked = _server.UserUpdate;
+            intervalSlider.Value = _server.StreamerCheckInterval;
+            streamPostChannelBox.Text = _server.StreamPostChannel.ToString();
+            streamerRoleBox.Text = _server.StreamingRole.ToString();
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -163,54 +180,111 @@ namespace Altimit_OS
             UpdateView("dob");
             BotFrame.SaveFile("servers");
         }
-        //-----Reaction Locks-----------------------
-        private void LockAdd_Click(object sender, RoutedEventArgs e)
+        //-----Streamers----------------------------
+        private void StreamersAdd_Click(object sender, RoutedEventArgs e)
         {
-            ReactionLock rl = new ReactionLock();
+            StreamerEditor se = new StreamerEditor();
+            se.Owner = this;
+            se.Title = "New Streamer";
+            se.mentionLevelComboBox.SelectedItem = MentionLevel.None;
+            se.ShowDialog();
+            if (se.DialogResult.HasValue && se.DialogResult.Value)
+            {
+                Streamer newStreamer = new Streamer()
+                {
+                    Streaming = false,
+                    DiscordId = ulong.Parse(se.discordIdBox.Text),
+                    DiscordName = _client.Guilds.FirstOrDefault(x => x.Id == _server.ServerId).Users.FirstOrDefault(y => y.Id == ulong.Parse(se.discordIdBox.Text)).ToString(),
+                    LastUpdate = "",
+                    Mention = (MentionLevel)se.mentionLevelComboBox.SelectedItem,
+                    GiveRole = se.giveRoleCheckBox.IsChecked.Value,
+                    AutoPost = se.autoPostCheckBox.IsChecked.Value,
+                    TwitchName = se.twitchNameBox.Text
+                };
+                if (_server.StreamerList == null)
+                    _server.StreamerList = new List<Streamer>();
+                _server.StreamerList.Add(newStreamer);
+                UpdateView("streamer");
+                BotFrame.SaveFile("servers");
+            }
+        }
+        private void StreamersEdit_Click(object sender, RoutedEventArgs e)
+        {
+            StreamerEditor se = new StreamerEditor();
+            se.Owner = this;
+            se._streamer = _server.StreamerList[streamerListBox.SelectedIndex];
+            se.Title = $"Edit Streamer {se._streamer.DiscordName}";
+            se.ShowDialog();
+            if (se.DialogResult.HasValue && se.DialogResult.Value)
+            {
+                se._streamer.DiscordId = ulong.Parse(se.discordIdBox.Text);
+                se._streamer.DiscordName = _client.Guilds.FirstOrDefault(x => x.Id == _server.ServerId).Users.FirstOrDefault(y => y.Id == ulong.Parse(se.discordIdBox.Text)).ToString();
+                se._streamer.TwitchName = se.twitchNameBox.Text;
+                se._streamer.Mention = (MentionLevel)se.mentionLevelComboBox.SelectedItem;
+                se._streamer.GiveRole = se.giveRoleCheckBox.IsChecked.Value;
+                se._streamer.AutoPost = se.autoPostCheckBox.IsChecked.Value;
+                UpdateView("streamers");
+                BotFrame.SaveFile("servers");
+            }
+        }
+        private void StreamersDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var res = MessageBox.Show("Are you sure you want to remove this item?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res == MessageBoxResult.No)
+                return;
+            _server.StreamerList.Remove(_server.StreamerList[streamerListBox.SelectedIndex]);
+            UpdateView("streamers");
+            BotFrame.SaveFile("servers");
+        }
+        //-----Reaction Locks-----------------------
+        private void ReactionLocksAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ReactionLockEditor rl = new ReactionLockEditor();
             rl.Owner = this;
+            rl.Title = "New Reaction Lock";
             rl.ShowDialog();
             if (rl.DialogResult.HasValue && rl.DialogResult.Value)
             {
-                ReactionLockItem newLock = new ReactionLockItem()
+                ReactionLock newLock = new ReactionLock()
                 {
-                    Channel = ulong.Parse(rl.channelIdBox.Text),
-                    Emote = rl.emoteIdBox.Text,
-                    Role = ulong.Parse(rl.awardRoleIdBox.Text),
-                    Message = ulong.Parse(rl.messageIdBox.Text)
+                    ChannelId = ulong.Parse(rl.channelBox.Text),
+                    MessageId = ulong.Parse(rl.messageBox.Text),
+                    Emote = rl.emoteBox.Text,
+                    GiveRole = ulong.Parse(rl.giveRoleBox.Text),
+                    TakeRole = ulong.Parse(rl.takeRoleBox.Text)
                 };
                 if (_server.ReactionLockList == null)
-                    _server.ReactionLockList = new List<ReactionLockItem>();
+                    _server.ReactionLockList = new List<ReactionLock>();
                 _server.ReactionLockList.Add(newLock);
-                UpdateView("reactionlocks");
+                UpdateView("reactionlock");
                 BotFrame.SaveFile("servers");
             }
         }
-        private void LockEdit_Click(object sender, RoutedEventArgs e)
+        private void ReactionLocksEdit_Click(object sender, RoutedEventArgs e)
         {
-            ReactionLock rl = new ReactionLock();
+            ReactionLockEditor rl = new ReactionLockEditor();
             rl.Owner = this;
             rl._lock = _server.ReactionLockList[reactionLockListBox.SelectedIndex];
+            rl.Title = $"Edit lock {rl._lock.MessageId}";
             rl.ShowDialog();
             if (rl.DialogResult.HasValue && rl.DialogResult.Value)
             {
-                rl._lock.Channel = ulong.Parse(rl.channelIdBox.Text);
-                rl._lock.Emote = rl.emoteIdBox.Text;
-                rl._lock.Role = ulong.Parse(rl.awardRoleIdBox.Text);
-                rl._lock.Message = ulong.Parse(rl.messageIdBox.Text);
-                UpdateView("reactionlocks");
+                rl._lock.ChannelId = ulong.Parse(rl.channelBox.Text);
+                rl._lock.MessageId = ulong.Parse(rl.messageBox.Text);
+                rl._lock.Emote = rl.emoteBox.Text;
+                rl._lock.GiveRole = ulong.Parse(rl.giveRoleBox.Text);
+                rl._lock.TakeRole = ulong.Parse(rl.takeRoleBox.Text);
+                UpdateView("reactionlock");
                 BotFrame.SaveFile("servers");
             }
         }
-        private void LockRemove_Click(object sender, RoutedEventArgs e)
+        private void ReactionLocksDelete_Click(object sender, RoutedEventArgs e)
         {
             var res = MessageBox.Show("Are you sure you want to remove this item?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (res == MessageBoxResult.No)
                 return;
             _server.ReactionLockList.Remove(_server.ReactionLockList[reactionLockListBox.SelectedIndex]);
-            LockList.Clear();
-            foreach (var reactionLock in _server.ReactionLockList)
-                LockList.Add(reactionLock);
-            UpdateView("reactionlocks");
+            UpdateView("reactionlock");
             BotFrame.SaveFile("servers");
         }
         //-----Music--------------------------------
@@ -241,21 +315,15 @@ namespace Altimit_OS
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             //-----DOB--------------------------------------------------------------------
-            ulong newUserRole;
-            ulong memberRole;
-            ulong adminChan;
-            bool res = ulong.TryParse(newUserRoleIdBox.Text, out newUserRole);
-            if (res)
+            if (ulong.TryParse(newUserRoleIdBox.Text, out ulong newUserRole))
                 _server.NewUserRole = newUserRole;
             else
                 _server.NewUserRole = 0;
-            res = ulong.TryParse(memberRoleIdBox.Text, out memberRole);
-            if (res)
+            if (ulong.TryParse(memberRoleIdBox.Text, out ulong memberRole))
                 _server.MemberRole = memberRole;
             else
                 _server.MemberRole = 0;
-            res = ulong.TryParse(adminLogChanBox.Text, out adminChan);
-            if (res)
+            if (ulong.TryParse(adminLogChanBox.Text, out ulong adminChan))
                 _server.AdminChannel = adminChan;
             else
                 _server.AdminChannel = 0;
@@ -272,42 +340,41 @@ namespace Altimit_OS
             else
                 _server.LoopOne = false;
             //-----Settings---------------------------------------------------------------
-            ulong adminRole;
-            ulong botChan;
-            ulong dobChan;
-            ulong welcomeChan;
-            ulong blacklistChan;
             if (serverPrefixCheckBox.IsChecked == true)
                 _server.Prefix = (PrefixChar)serverPrefixBox.SelectedItem;
-            res = ulong.TryParse(adminRoleBox.Text, out adminRole);
-            if (res)
+            if (ulong.TryParse(adminRoleBox.Text, out ulong adminRole))
                 _server.AdminRole = adminRole;
             else
                 _server.AdminRole = 0;
-            res = ulong.TryParse(botchanBox.Text, out botChan);
-            if (res)
+            if (ulong.TryParse(botchanBox.Text, out ulong botChan))
                 _server.BotChannel = botChan;
             else
                 _server.BotChannel = 0;
-            res = ulong.TryParse(dobchanBox.Text, out dobChan);
-            if (res)
+            if (ulong.TryParse(dobchanBox.Text, out ulong dobChan))
                 _server.DOBChannel = dobChan;
             else
                 _server.DOBChannel = 0;
-            res = ulong.TryParse(welcomeChanBox.Text, out welcomeChan);
-            if (res)
+            if (ulong.TryParse(welcomeChanBox.Text, out ulong welcomeChan))
                 _server.WelcomeChannel = welcomeChan;
             else
                 _server.WelcomeChannel = 0;
             _server.UseWelcomeForDob = dobCheckBox.IsChecked.Value;
             _server.UseWelcomeForLeave = leaveCheckBox.IsChecked.Value;
-            res = ulong.TryParse(blacklistChanBox.Text, out blacklistChan);
-            if (res)
+            if (ulong.TryParse(blacklistChanBox.Text, out ulong blacklistChan))
                 _server.BlacklistChannel = blacklistChan;
             else
                 _server.BlacklistChannel = 0;
             _server.UseBlacklist = blacklistCheckbox.IsChecked.Value;
             _server.UserUpdate = userUpdateCheckbox.IsChecked.Value;
+            _server.StreamerCheckInterval = intervalSlider.Value;
+            if (ulong.TryParse(streamPostChannelBox.Text, out ulong postChannel))
+                _server.StreamPostChannel = postChannel;
+            else
+                _server.StreamPostChannel = 0;
+            if (ulong.TryParse(streamerRoleBox.Text, out ulong streamerRole))
+                _server.StreamingRole = streamerRole;
+            else
+                _server.StreamingRole = 0;
             BotFrame.SaveFile("servers");
         }
         private void Close_Click(object sender, RoutedEventArgs e)
@@ -322,6 +389,11 @@ namespace Altimit_OS
                     UserList.Clear();
                     foreach (var user in _server.UserInfoList)
                         UserList.Add(user);
+                    break;
+                case "streamers":
+                    StreamerList.Clear();
+                    foreach (var streamer in _server.StreamerList)
+                        StreamerList.Add(streamer);
                     break;
                 case "reactionlocks":
                     LockList.Clear();

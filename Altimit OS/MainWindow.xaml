@@ -29,7 +29,7 @@
                     </StatusBar>
                 </Grid>
             </TabItem>
-            <TabItem Header="Server Manager">
+            <TabItem Header="Server Manager" Name="serverTab" Visibility="Collapsed">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

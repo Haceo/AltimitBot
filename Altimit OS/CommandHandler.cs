@@ -127,28 +127,35 @@ namespace Altimit_OS
                 $"Reason:{Environment.NewLine}" +
                 $"{ban.Reason}", time: -1);
         }
-        private async Task ReactionAddedHandler(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task ReactionAddedHandler(Cacheable<IUserMessage, ulong> userMessage, ISocketMessageChannel messageChannel, SocketReaction reaction)
         {
-            SocketGuildChannel guildChannel = channel as SocketGuildChannel;
+            SocketGuildChannel guildChannel = messageChannel as SocketGuildChannel;
             SocketGuildUser user = guildChannel.Guild.Users.FirstOrDefault(x => x.Id == reaction.UserId);
             DiscordServer server = _main.ServerList.FirstOrDefault(x => x.ServerId == guildChannel.Guild.Id);
             if (server == null || user == null)
                 return;
             //-----Reaction Locks-------------------------------------------------------------------------------------------
-            foreach (var reactionLock in server.ReactionLockList.Where(x => x.Channel == channel.Id && x.Message == message.Id))
+            foreach (var reactionLock in server.ReactionLockList.Where(x => x.ChannelId == guildChannel.Id && x.MessageId == userMessage.Id))
             {
-                if (reaction.Emote.ToString() == reactionLock.Emote)
+                if (reactionLock.Emote == reaction.Emote.ToString())
                 {
-                    var guildRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.Role);
-                    if (guildRole == null)
+                    var giveRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.GiveRole);
+                    var takeRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.TakeRole);
+                    if (giveRole == null)
                         return;
-                    if (!user.Roles.Contains(guildRole))
+                    if (!user.Roles.Contains(giveRole))
                     {
-                        BotFrame.consoleOut($"Adding role @{guildRole} to user {user} in server {guildChannel.Guild.Name}");
-                        await user.AddRoleAsync(guildRole);
+                        BotFrame.consoleOut($"Adding role @{giveRole} to user {user} in server {guildChannel.Guild.Name}");
+                        await user.AddRoleAsync(giveRole);
+                        if (takeRole != null)
+                        {
+                            BotFrame.consoleOut($"Removing role @{takeRole} from user {user} in server {guildChannel.Guild.Name}");
+                            await user.RemoveRoleAsync(takeRole);
+                        }
                     }
                 }
             }
+            //--------------
         }
         private async Task MessageReceivedHandler(SocketMessage msg)
         {

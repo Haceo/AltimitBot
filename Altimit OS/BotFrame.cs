@@ -127,11 +127,40 @@ namespace Altimit_OS
                 }
             }
         }
+        public static async Task StreamPost(ISocketMessageChannel chan, IUser user, TwitchLib.Api.V5.Models.Streams.Stream stream, int loud = 0)
+        {
+            var url = stream.Channel.Url;
+            var embed = new EmbedBuilder();
+            embed.WithAuthor(new EmbedAuthorBuilder() { Name = $"{user.Username} is streaming on Twitch!", IconUrl = user.GetAvatarUrl(), Url = url });
+            embed.WithTitle(stream.Channel.Status);
+            embed.WithUrl(url);
+            embed.WithColor(new Color(100, 65, 165));
+            embed.AddField($"Playing {stream.Channel.Game} for {stream.Viewers} viewers!", $"[Watch Stream]({url})");
+            embed.WithImageUrl(stream.Preview.Large + $"?time={(Int32)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds}");
+            embed.WithFooter("Skynet is always watching!");
+            var embeded = embed.Build();
+            string mention = "";
+            switch (loud)
+            {
+                case 0:
+                    mention = "";
+                    break;
+                case 1:
+                    mention = "@here";
+                    break;
+                case 2:
+                    mention = "@everyone";
+                    break;
+            }
+            await chan.SendMessageAsync(mention, false, embeded);
+        }
     }
 
     public class Config
     {
-        public string Token { get; set; }
+        public string DiscordToken { get; set; }
+        public string TwitchToken { get; set; }
+        public string TwitchClientId { get; set; }
     }
     public enum PrefixChar
     {
@@ -165,12 +194,17 @@ namespace Altimit_OS
         public PrefixChar Prefix { get; set; }
         public string ServerJoined { get; set; }
         public List<UserInfo> UserInfoList { get; set; }
-        public List<ReactionLockItem> ReactionLockList { get; set; }
+        public List<ReactionLock> ReactionLockList { get; set; }
         public List<TimeoutMember> TimeoutList { get; set; }
         public List<Song> SongList { get; set; }
         public int MaxLength { get; set; }
         public bool Continuous { get; set; }
         public bool LoopOne { get; set; }
+        public List<Streamer> StreamerList { get; set; }
+        public ulong StreamPostChannel { get; set; }
+        public ulong StreamingRole { get; set; }
+        public double StreamerCheckInterval { get; set; }
+        public double StreamerCheckElapsed { get; set; }
         public bool OwO { get; set; }
     }
     public class Song
@@ -218,12 +252,30 @@ namespace Altimit_OS
         Banned,
         SuspiciousDate
     }
-    public class ReactionLockItem
+    public enum MentionLevel
     {
-        public ulong Channel { get; set; }
-        public ulong Message { get; set; }
+        None = 0,
+        Here = 1,
+        Everyone = 2
+    }
+    public class Streamer
+    {
+        public bool Streaming { get; set; }
+        public string DiscordName { get; set; }
+        public ulong DiscordId { get; set; }
+        public string TwitchName { get; set; }
+        public string LastUpdate { get; set; }
+        public bool GiveRole { get; set; }
+        public bool AutoPost { get; set; }
+        public MentionLevel Mention { get; set; }
+    }
+    public class ReactionLock
+    {
+        public ulong ChannelId { get; set; }
+        public ulong MessageId { get; set; }
         public string Emote { get; set; }
-        public ulong Role { get; set; }
+        public ulong GiveRole { get; set; }
+        public ulong TakeRole { get; set; }
     }
     public class TimeoutMember
     {

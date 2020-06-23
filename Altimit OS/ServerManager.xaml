@@ -52,6 +52,42 @@
                     <Button Content="Remove" Grid.Row="2" Grid.Column="3" Width="100" Margin="5" Click="DOBRemove_Click"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Streamers">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListView Name="streamerListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding StreamerList}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Streaming}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Discord Name" DisplayMemberBinding="{Binding DiscordName}"/>
+                                <GridViewColumn Header="Discord ID" DisplayMemberBinding="{Binding DiscordId}"/>
+                                <GridViewColumn Header="Twitch Name" DisplayMemberBinding="{Binding TwitchName}"/>
+                                <GridViewColumn Header="Mention" DisplayMemberBinding="{Binding Mention}"/>
+                                <GridViewColumn Header="Give Role" DisplayMemberBinding="{Binding GiveRole}"/>
+                                <GridViewColumn Header="Auto Post" DisplayMemberBinding="{Binding AutoPost}"/>
+                                <GridViewColumn Header="Last Update" DisplayMemberBinding="{Binding LastUpdate}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button Content="Add" Grid.Row="1" Grid.Column="0" Width="100" Margin="5" Click="StreamersAdd_Click"/>
+                    <Button Content="Edit" Grid.Row="1" Grid.Column="1" Width="100" Margin="5" Click="StreamersEdit_Click"/>
+                    <Button Content="Delete" Grid.Row="1" Grid.Column="2" Width="100" Margin="5" Click="StreamersDelete_Click"/>
+                </Grid>
+            </TabItem>
             <TabItem Header="Reaction Locks">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -66,16 +102,17 @@
                     <ListView Name="reactionLockListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding LockList}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Channel ID" DisplayMemberBinding="{Binding Channel}"/>
-                                <GridViewColumn Header="Message ID" DisplayMemberBinding="{Binding Message}"/>
-                                <GridViewColumn Header="Reaction Emote" DisplayMemberBinding="{Binding Emote}"/>
-                                <GridViewColumn Header="Award Role" DisplayMemberBinding="{Binding Role}"/>
+                                <GridViewColumn Header="Channel ID" DisplayMemberBinding="{Binding ChannelId}"/>
+                                <GridViewColumn Header="Message ID" DisplayMemberBinding="{Binding MessageId}"/>
+                                <GridViewColumn Header="Emote" DisplayMemberBinding="{Binding Emote}"/>
+                                <GridViewColumn Header="Give Role" DisplayMemberBinding="{Binding GiveRole}"/>
+                                <GridViewColumn Header="Take Role" DisplayMemberBinding="{Binding TakeRole}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button Content="Add" Grid.Row="1" Grid.Column="0" Width="100" Margin="5" Click="LockAdd_Click"/>
-                    <Button Content="Edit" Grid.Row="1" Grid.Column="1" Width="100" Margin="5" Click="LockEdit_Click"/>
-                    <Button Content="Remove" Grid.Row="1" Grid.Column="2" Width="100" Margin="5" Click="LockRemove_Click"/>
+                    <Button Content="Add" Grid.Row="1" Grid.Column="0" Width="100" Margin="5" Click="ReactionLocksAdd_Click"/>
+                    <Button Content="Edit" Grid.Row="1" Grid.Column="1" Width="100" Margin="5" Click="ReactionLocksEdit_Click"/>
+                    <Button Content="Remove" Grid.Row="1" Grid.Column="2" Width="100" Margin="5" Click="ReactionLocksDelete_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Music">
@@ -123,6 +160,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <CheckBox Name="serverPrefixCheckBox" Grid.Row="0" Grid.Column="0" Content="Prefix" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Prefix_Enable" Unchecked="Prefix_Disable" Margin="5"/>
                         <ComboBox Name="serverPrefixBox" Grid.Row="0" Grid.Column="1" Width="150" Height="25" IsEnabled="False" Margin="5"/>
@@ -143,6 +182,15 @@
                         <TextBox Name="blacklistChanBox" Grid.Row="3" Grid.Column="1" Width="150" Height="25" HorizontalContentAlignment="Center" Margin="5"/>
                         <CheckBox Name="blacklistCheckbox" Content="Use Blacklist" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
                         <CheckBox Name="userUpdateCheckbox" Content="User update notify" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+
+                        <Label Content="Streamer Check Interval:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <Slider x:Name="intervalSlider" Minimum="1" Maximum="60" IsSnapToTickEnabled="True" TickFrequency="0.5" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="4" Grid.Column="2" Width="75" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Text="{Binding ElementName=intervalSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <Label Content="Stream Post Channel:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="streamPostChannelBox" Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
+                        <Label Content="Streamer Role:" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Name="streamerRoleBox" Grid.Row="5" Grid.Column="3" Width="150" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
                     </Grid>
                 </GroupBox>
             </TabItem>

@@ -9,10 +9,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TwitchLib.Api;
 
 namespace Altimit_OS
 {
@@ -20,6 +22,8 @@ namespace Altimit_OS
     {
         public static DiscordSocketClient _client;
         static CommandHandler _handler;
+        public static TwitchAPI _api;
+        public Timer _timer = new Timer(30000);
         public bool loading = false;
         public List<AudioContainer> AudioInfo = new List<AudioContainer>();
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,14 +60,26 @@ namespace Altimit_OS
             Modules.Audio._main = this;
             Modules.Admin._main = this;
             Modules.Misc._main = this;
+            Modules.Signup._main = this;
             BotFrame.LoadFile("config");
             BotFrame.LoadFile("servers");
             if (BotFrame.config == null)
                 BotFrame.config = new Config();
-            if (BotFrame.config.Token != null || BotFrame.config.Token == "")
+            if (BotFrame.config.DiscordToken != null || BotFrame.config.DiscordToken == "")
                 connectionButton.IsEnabled = true;
             if (ServerList == null)
                 ServerList = new ObservableCollection<DiscordServer>();
+            _api = new TwitchAPI();
+            _timer.Elapsed += StreamerCheck_Elapsed;
+        }
+        private void StreamerCheck_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            foreach (var server in ServerList)
+            {
+                server.StreamerCheckElapsed += 0.5;
+                if (server.StreamerCheckInterval <= server.StreamerCheckElapsed)
+                    StreamerHandler(server);
+            }
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -98,19 +114,25 @@ namespace Altimit_OS
         }
         private void ConsoleToken_Click(object sender, RoutedEventArgs e)
         {
-            TokenEntry te = new TokenEntry();
+            TokenEntry tp = new TokenEntry();
             if (BotFrame.config == null)
                 BotFrame.config = new Config();
-            if (BotFrame.config.Token != null)
-                te.tokenBox.Text = BotFrame.config.Token;
-            te.Owner = this;
-            te.ShowDialog();
-            if (te.DialogResult.HasValue && te.DialogResult.Value)
+            if (BotFrame.config.DiscordToken != null)
+                tp.discordTokenBox.Text = BotFrame.config.DiscordToken;
+            if (BotFrame.config.TwitchToken != null)
+                tp.twitchTokenBox.Text = BotFrame.config.TwitchToken;
+            if (BotFrame.config.TwitchClientId != null)
+                tp.twitchClientIdBox.Text = BotFrame.config.TwitchClientId;
+            tp.Owner = this;
+            tp.ShowDialog();
+            if (tp.DialogResult.HasValue && tp.DialogResult.Value)
             {
-                BotFrame.config.Token = te.tokenBox.Text;
+                BotFrame.config.DiscordToken = tp.discordTokenBox.Text;
+                BotFrame.config.TwitchToken = tp.twitchTokenBox.Text;
+                BotFrame.config.TwitchClientId = tp.twitchClientIdBox.Text;
                 BotFrame.SaveFile("config");
                 connectionButton.IsEnabled = false;
-                if (BotFrame.config.Token != null || BotFrame.config.Token != "")
+                if (BotFrame.config.DiscordToken != null || BotFrame.config.DiscordToken != "")
                     connectionButton.IsEnabled = true;
             }
         }
@@ -196,7 +218,7 @@ namespace Altimit_OS
                 return;
             }
             connectionButton.Content = "Connecting...";
-            if (BotFrame.config.Token == null || BotFrame.config.Token == "")
+            if (BotFrame.config.DiscordToken == null || BotFrame.config.DiscordToken == "")
             {
                 MessageBox.Show(this, "No token set, please use the Token button to set one!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -207,14 +229,18 @@ namespace Altimit_OS
                 LogLevel = LogSeverity.Verbose
             });
             _client.Log += Log;
-            await _client.LoginAsync(TokenType.Bot, BotFrame.config.Token);
+            await _client.LoginAsync(TokenType.Bot, BotFrame.config.DiscordToken);
             await _client.StartAsync();
             _handler = new CommandHandler();
             await _handler.InitAsync(_client);
+            _api.Settings.ClientId = BotFrame.config.TwitchClientId;
+            _api.Settings.AccessToken = BotFrame.config.TwitchToken;
             connectionLight.Fill = Brushes.Green;
             await Task.Delay(2000);
             await ServerCheck();
             connectionButton.Content = "Connected!";
+            serverTab.Visibility = Visibility.Visible;
+            _timer.Enabled = true;
             await Task.Delay(-1);
         }
         private async Task Disconnect()
@@ -227,6 +253,8 @@ namespace Altimit_OS
             _client.Dispose();
             connectionLight.Fill = Brushes.Red;
             connectionButton.Content = "Disconnected!";
+            serverTab.Visibility = Visibility.Collapsed;
+            _timer.Enabled = false;
         }
         public async Task Log(LogMessage msg)
         {
@@ -266,6 +294,45 @@ namespace Altimit_OS
             BotFrame.SaveFile("servers");
             ServerList.Clear();
             BotFrame.LoadFile("servers");
+        }
+        public async Task StreamerHandler(DiscordServer server)
+        {
+            server.StreamerCheckElapsed = 0;
+            foreach (var streamer in server.StreamerList)
+            {
+                var guild = _client.Guilds.FirstOrDefault(x => x.Id == server.ServerId);
+                var streamRole = guild.Roles.FirstOrDefault(x => x.Id == server.StreamingRole);
+                var channel = guild.Channels.FirstOrDefault(x => x.Id == server.StreamPostChannel) as ISocketMessageChannel;
+                var user = guild.Users.FirstOrDefault(x => x.Id == streamer.DiscordId);
+
+                var stream = await _api.V5.Streams.GetStreamByUserAsync((await _api.V5.Users.GetUserByNameAsync(streamer.TwitchName)).Matches[0].Id);
+                if (stream.Stream == null)//not streaming
+                {
+                    if (streamer.Streaming)
+                    {
+                        streamer.LastUpdate = "";
+                        streamer.Streaming = false;
+                        if (server.StreamingRole != 0 && streamer.GiveRole && user.Roles.Contains(streamRole))
+                            await user.RemoveRoleAsync(streamRole);
+                        BotFrame.SaveFile("servers");
+                    }
+                    continue;
+                }
+                if (!streamer.Streaming)//not marked
+                {
+                    streamer.Streaming = true;
+                    if (server.StreamingRole != 0 && streamer.GiveRole && !user.Roles.Contains(streamRole))
+                        await user.AddRoleAsync(streamRole);
+                }
+                string update = stream.Stream.Channel.UpdatedAt.ToString();
+                if (streamer.LastUpdate != update)
+                {
+                    streamer.LastUpdate = update;
+                    if (server.StreamPostChannel != 0 && streamer.AutoPost)
+                        BotFrame.StreamPost(channel, user, stream.Stream, (int)streamer.Mention);
+                    BotFrame.SaveFile("servers");
+                }
+            }
         }
     }
 }
