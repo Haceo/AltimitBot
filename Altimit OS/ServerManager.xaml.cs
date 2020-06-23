@@ -195,7 +195,6 @@ namespace Altimit_OS
                     Streaming = false,
                     DiscordId = ulong.Parse(se.discordIdBox.Text),
                     DiscordName = _client.Guilds.FirstOrDefault(x => x.Id == _server.ServerId).Users.FirstOrDefault(y => y.Id == ulong.Parse(se.discordIdBox.Text)).ToString(),
-                    LastUpdate = "",
                     Mention = (MentionLevel)se.mentionLevelComboBox.SelectedItem,
                     GiveRole = se.giveRoleCheckBox.IsChecked.Value,
                     AutoPost = se.autoPostCheckBox.IsChecked.Value,

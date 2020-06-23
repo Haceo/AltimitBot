@@ -264,7 +264,6 @@ namespace Altimit_OS
         public string DiscordName { get; set; }
         public ulong DiscordId { get; set; }
         public string TwitchName { get; set; }
-        public string LastUpdate { get; set; }
         public string Game { get; set; }
         public bool GiveRole { get; set; }
         public bool AutoPost { get; set; }
