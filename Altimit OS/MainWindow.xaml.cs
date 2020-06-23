@@ -311,6 +311,7 @@ namespace Altimit_OS
                     if (streamer.Streaming)
                     {
                         streamer.LastUpdate = "";
+                        streamer.Game = "";
                         streamer.Streaming = false;
                         if (server.StreamingRole != 0 && streamer.GiveRole && user.Roles.Contains(streamRole))
                             await user.RemoveRoleAsync(streamRole);
@@ -328,8 +329,11 @@ namespace Altimit_OS
                 if (streamer.LastUpdate != update)
                 {
                     streamer.LastUpdate = update;
-                    if (server.StreamPostChannel != 0 && streamer.AutoPost)
+                    if (server.StreamPostChannel != 0 && streamer.AutoPost && stream.Stream.Channel.Game != streamer.Game)
+                    {
                         BotFrame.StreamPost(channel, user, stream.Stream, (int)streamer.Mention);
+                        streamer.Game = stream.Stream.Channel.Game;
+                    }
                     BotFrame.SaveFile("servers");
                 }
             }
