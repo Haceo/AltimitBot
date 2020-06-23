@@ -89,6 +89,14 @@ namespace Altimit_OS.Modules
             else
                 return context.Guild.Roles.FirstOrDefault(x => x.Name.ToLower() == role.ToLower());
         }
+        [Command("emoteid", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
+        public async Task GetEmoteId(string emote)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            BotFrame.consoleOut($"{emote}");
+        }
 
         /*
 [Command("poll", RunMode = RunMode.Async)]
