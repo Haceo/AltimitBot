@@ -46,8 +46,9 @@ namespace Altimit_OS
                     _main.ServerList.Add(newServer);
                 });
             }
-            _main.UpdateView("ServerList");
             BotFrame.SaveFile("servers");
+            _main.ServerList.Clear();
+            BotFrame.LoadFile("servers");
         }
         private async Task UserJoinedHandler(SocketGuildUser u)
         {
