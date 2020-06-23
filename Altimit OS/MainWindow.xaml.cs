@@ -58,8 +58,12 @@ namespace Altimit_OS
             Modules.Misc._main = this;
             BotFrame.LoadFile("config");
             BotFrame.LoadFile("servers");
+            if (BotFrame.config == null)
+                BotFrame.config = new Config();
             if (BotFrame.config.Token != null || BotFrame.config.Token == "")
                 connectionButton.IsEnabled = true;
+            if (ServerList == null)
+                ServerList = new ObservableCollection<DiscordServer>();
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -117,7 +121,8 @@ namespace Altimit_OS
         //-----ServerManager-----
         private void ServerRefresh_Click(object sender, RoutedEventArgs e)
         {
-            UpdateView("ServerList");
+            ServerList.Clear();
+            BotFrame.LoadFile("servers");
         }
         private void ServerLoad_Click(object sender, RoutedEventArgs e)
         {
@@ -181,10 +186,6 @@ namespace Altimit_OS
             }
             sm.ShowDialog();
             sm = null;
-        }
-        public void UpdateView(string view)
-        {
-            RaisePropertyChanged($"{view}List");
         }
         //-----Connection----
         private async Task Connect()
@@ -262,8 +263,9 @@ namespace Altimit_OS
                 if (check == null)
                     savedGuild.Active = false;
             }
-            UpdateView("ServerList");
             BotFrame.SaveFile("servers");
+            ServerList.Clear();
+            BotFrame.LoadFile("servers");
         }
     }
 }

@@ -119,7 +119,7 @@ namespace Altimit_OS
                 if (_server.UserInfoList == null)
                     _server.UserInfoList = new List<UserInfo>();
                 _server.UserInfoList.Add(newUser);
-                UpdateView("UserList");
+                UpdateView("dob");
                 BotFrame.SaveFile("servers");
             }
         }
@@ -147,7 +147,7 @@ namespace Altimit_OS
                 ue._user.Submitted = ue.submitedDatePicker.SelectedDate.Value;
                 ue._user.Flagged = ue.isFlagged.IsChecked.Value;
                 ue._user.Status = (UserStatus)ue.statusComboBox.SelectedItem;
-                UpdateView("UserList");
+                UpdateView("dob");
                 BotFrame.SaveFile("servers");
             }
         }
@@ -160,7 +160,7 @@ namespace Altimit_OS
             UserList.Clear();
             foreach (var user in _server.UserInfoList)
                 UserList.Add(user);
-            UpdateView("UserList");
+            UpdateView("dob");
             BotFrame.SaveFile("servers");
         }
         //-----Reaction Locks-----------------------
@@ -181,7 +181,7 @@ namespace Altimit_OS
                 if (_server.ReactionLockList == null)
                     _server.ReactionLockList = new List<ReactionLockItem>();
                 _server.ReactionLockList.Add(newLock);
-                UpdateView("LockList");
+                UpdateView("reactionlocks");
                 BotFrame.SaveFile("servers");
             }
         }
@@ -197,7 +197,7 @@ namespace Altimit_OS
                 rl._lock.Emote = rl.emoteIdBox.Text;
                 rl._lock.Role = ulong.Parse(rl.awardRoleIdBox.Text);
                 rl._lock.Message = ulong.Parse(rl.messageIdBox.Text);
-                UpdateView("LockList");
+                UpdateView("reactionlocks");
                 BotFrame.SaveFile("servers");
             }
         }
@@ -210,7 +210,7 @@ namespace Altimit_OS
             LockList.Clear();
             foreach (var reactionLock in _server.ReactionLockList)
                 LockList.Add(reactionLock);
-            UpdateView("LockList");
+            UpdateView("reactionlocks");
             BotFrame.SaveFile("servers");
         }
         //-----Music--------------------------------
@@ -224,7 +224,7 @@ namespace Altimit_OS
             SongList.Clear();
             foreach (var song in _server.SongList)
                 SongList.Add(song);
-            UpdateView("SongList");
+            UpdateView("music");
             BotFrame.SaveFile("servers");
         }
         //-----Server Setting-----------------------
@@ -316,7 +316,24 @@ namespace Altimit_OS
         }
         private void UpdateView(string view)
         {
-            RaisePropertyChanged($"{view}List");
+            switch (view)
+            {
+                case "dob":
+                    UserList.Clear();
+                    foreach (var user in _server.UserInfoList)
+                        UserList.Add(user);
+                    break;
+                case "reactionlocks":
+                    LockList.Clear();
+                    foreach (var lockItem in _server.ReactionLockList)
+                        LockList.Add(lockItem);
+                    break;
+                case "music":
+                    SongList.Clear();
+                    foreach (var song in _server.SongList)
+                        SongList.Add(song);
+                    break;
+            }
         }
     }
 }
