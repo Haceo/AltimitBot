@@ -137,7 +137,7 @@ namespace Altimit_OS
             embed.WithColor(new Color(100, 65, 165));
             embed.AddField($"Playing {stream.Channel.Game} for {stream.Viewers} viewers!", $"[Watch Stream]({url})");
             embed.WithImageUrl(stream.Preview.Large + $"?time={(Int32)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds}");
-            embed.WithFooter("Skynet is always watching!");
+            embed.WithFooter("Altimit OS is always watching!");
             var embeded = embed.Build();
             string mention = "";
             switch (loud)
