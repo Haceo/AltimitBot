@@ -90,18 +90,6 @@ namespace Altimit_OS.Modules
                 return context.Guild.Roles.FirstOrDefault(x => x.Name.ToLower() == role.ToLower());
         }
 
-        [Command("test")]
-        public async Task test(string emote)
-        {
-            await Task.Delay(200);
-            IEmote output;
-            if (Emote.TryParse(emote, out var rawEmote))
-                output = rawEmote;
-            else
-                output = new Emoji(emote);
-            await Context.Message.AddReactionAsync(output);
-        }
-
         /*
 [Command("poll", RunMode = RunMode.Async)]
 public async Task PollStart(string question, [Remainder]string options = "")
