@@ -90,6 +90,17 @@ namespace Altimit_OS.Modules
                 return context.Guild.Roles.FirstOrDefault(x => x.Name.ToLower() == role.ToLower());
         }
 
+        [Command("test")]
+        public async Task test(string emote)
+        {
+            await Task.Delay(200);
+            IEmote output;
+            if (Emote.TryParse(emote, out var rawEmote))
+                output = rawEmote;
+            else
+                output = new Emoji(emote);
+            await Context.Message.AddReactionAsync(output);
+        }
 
         /*
 [Command("poll", RunMode = RunMode.Async)]
@@ -164,14 +175,6 @@ public async Task PollStart(string question, [Remainder]string options = "")
        await iMsg.AddReactionAsync(option.Item2);
        await Task.Delay(1000);
    }
-}
-[Command("test")]
-public async Task test(ulong message)
-{
-   await Task.Delay(200);
-   await Context.Channel.DeleteMessageAsync(Context.Message);
-   IMessage getMsg = (Context.Guild.Channels.FirstOrDefault(x => x.Id == Context.Channel.Id) as ITextChannel).GetMessageAsync(message).Result;
-   BotFrame.consoleOut(getMsg.Reactions.First().Value.ReactionCount.ToString());
 }*/
 
 

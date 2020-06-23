@@ -136,13 +136,16 @@ namespace Altimit_OS
             //-----Reaction Locks-------------------------------------------------------------------------------------------
             foreach (var reactionLock in server.ReactionLockList.Where(x => x.Channel == channel.Id && x.Message == message.Id))
             {
-                var guildRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.Role);
-                if (guildRole == null)
-                    return;
-                if (!user.Roles.Contains(guildRole))
+                if (reaction.Emote.ToString() == reactionLock.Emote)
                 {
-                    BotFrame.consoleOut($"Adding role @{guildRole} to user {user} in server {guildChannel.Guild.Name}");
-                    await user.AddRoleAsync(guildRole);
+                    var guildRole = guildChannel.Guild.Roles.FirstOrDefault(x => x.Id == reactionLock.Role);
+                    if (guildRole == null)
+                        return;
+                    if (!user.Roles.Contains(guildRole))
+                    {
+                        BotFrame.consoleOut($"Adding role @{guildRole} to user {user} in server {guildChannel.Guild.Name}");
+                        await user.AddRoleAsync(guildRole);
+                    }
                 }
             }
         }
