@@ -79,7 +79,7 @@
                                 <GridViewColumn Header="Mention" DisplayMemberBinding="{Binding Mention}"/>
                                 <GridViewColumn Header="Give Role" DisplayMemberBinding="{Binding GiveRole}"/>
                                 <GridViewColumn Header="Auto Post" DisplayMemberBinding="{Binding AutoPost}"/>
-                                <GridViewColumn Header="Last Update" DisplayMemberBinding="{Binding LastUpdate}"/>
+                                <GridViewColumn Header="Game" DisplayMemberBinding="{Binding Game}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
