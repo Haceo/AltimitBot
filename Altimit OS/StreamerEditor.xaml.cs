@@ -24,6 +24,12 @@ namespace Altimit_OS
         }
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (discordIdBox.Text.Trim() == "0" || discordIdBox.Text.Trim() == ""
+                || twitchNameBox.Text.Trim() == "")
+            {
+                MessageBox.Show("You have left the discord ID or twitch name blank, please make sure to enter valid info and try again!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             DialogResult = true;
             Close();
         }

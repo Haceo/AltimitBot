@@ -22,6 +22,14 @@ namespace Altimit_OS
         }
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (channelBox.Text.Trim() == "0" || channelBox.Text.Trim() == ""
+                || messageBox.Text.Trim() == "0" || messageBox.Text.Trim() == ""
+                || giveRoleBox.Text.Trim() == "0" || giveRoleBox.Text.Trim() == ""
+                || emoteBox.Text.Trim() == "")
+            {
+                MessageBox.Show("You have not filled out all required fields, please check the marked fields and try again!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             DialogResult = true;
             Close();
         }

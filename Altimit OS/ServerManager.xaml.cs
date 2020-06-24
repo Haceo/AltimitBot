@@ -117,6 +117,11 @@ namespace Altimit_OS
             ue.ShowDialog();
             if (ue.DialogResult.HasValue && ue.DialogResult.Value)
             {
+                if (_server.UserInfoList.FirstOrDefault(x => x.UserId == ulong.Parse(ue.userIdBox.Text)) != null)
+                {
+                    MessageBox.Show("You are trying to add a user that already has an entry, please select the user entry and edit it instead!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 UserInfo newUser = new UserInfo()
                 {
                     UserId = ulong.Parse(ue.userIdBox.Text),
@@ -190,6 +195,11 @@ namespace Altimit_OS
             se.ShowDialog();
             if (se.DialogResult.HasValue && se.DialogResult.Value)
             {
+                if (_server.StreamerList.FirstOrDefault(x => x.DiscordId == ulong.Parse(se.discordIdBox.Text) || x.TwitchName == se.twitchNameBox.Text) != null)
+                {
+                    MessageBox.Show("You are trying to add a user that already has an entry, please select the user entry and edit it instead!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 Streamer newStreamer = new Streamer()
                 {
                     Streaming = false,
@@ -244,6 +254,11 @@ namespace Altimit_OS
             rl.ShowDialog();
             if (rl.DialogResult.HasValue && rl.DialogResult.Value)
             {
+                if (_server.ReactionLockList.FirstOrDefault(x => x.ChannelId == ulong.Parse(rl.channelBox.Text) && x.MessageId == ulong.Parse(rl.messageBox.Text)) != null)
+                {
+                    MessageBox.Show("You are trying to add a reaction lock that already has an entry, please select the reaction lock entry and edit it instead!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 ReactionLock newLock = new ReactionLock()
                 {
                     ChannelId = ulong.Parse(rl.channelBox.Text),
