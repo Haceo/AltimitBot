@@ -112,6 +112,15 @@ namespace Altimit_OS
         private async Task UserBannedHandler(SocketUser user, SocketGuild guild)
         {
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
+
+            var userInfo = server.UserInfoList.FirstOrDefault(x => x.UserId == user.Id);
+            if (userInfo != null)
+            {
+                userInfo.Flagged = true;
+                userInfo.Status = UserStatus.Banned;
+                BotFrame.SaveFile("servers");
+            }
+
             var blacklistChannel = guild.Channels.FirstOrDefault(x => x.Id == server.BlacklistChannel) as ISocketMessageChannel;
             if (blacklistChannel == null && server.UseBlacklist)
             {
