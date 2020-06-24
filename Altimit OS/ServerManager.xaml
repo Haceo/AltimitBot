@@ -29,7 +29,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ListView Name="dobListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding UserList}">
+                    <ListView Name="dobListBox" Grid.Row="0" Grid.ColumnSpan="99" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="3" ItemsSource="{Binding UserList}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Username" DisplayMemberBinding="{Binding UserName}"/>
@@ -63,7 +63,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListView Name="streamerListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding StreamerList}">
+                    <ListView Name="streamerListBox" Grid.Row="0" Grid.ColumnSpan="99" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="3" ItemsSource="{Binding StreamerList}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn>
@@ -99,7 +99,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ListView Name="reactionLockListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding LockList}">
+                    <ListView Name="reactionLockListBox" Grid.Row="0" Grid.ColumnSpan="99" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="3" ItemsSource="{Binding LockList}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Channel ID" DisplayMemberBinding="{Binding ChannelId}"/>
@@ -128,7 +128,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ListView Name="songListBox" Grid.Row="0" Grid.ColumnSpan="99" Margin="3" ItemsSource="{Binding SongList}">
+                    <ListView Name="songListBox" Grid.Row="0" Grid.ColumnSpan="99" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="3" ItemsSource="{Binding SongList}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Song Title" DisplayMemberBinding="{Binding Path=Title}"/>
