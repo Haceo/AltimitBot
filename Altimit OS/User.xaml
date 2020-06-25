@@ -8,30 +8,30 @@
         Title="New User" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Loaded="WPF_Loaded">
     <GroupBox Header="Edit User" Margin="15">
         <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Label Content="User Name:" Grid.Row="0" Grid.Column="0" Margin="5"/>
-        <TextBox Name="userNameBox" Grid.Row="0" Grid.Column="1" Width="150" Margin="5"/>
-        <Label Content="User ID:" Grid.Row="1" Grid.Column="0" Margin="5"/>
-        <TextBox Name="userIdBox" Grid.Row="1" Grid.Column="1" Width="150" Margin="5"/>
-        <Label Content="Birthday:" Grid.Row="2" Grid.Column="0" Margin="5"/>
-        <DatePicker Name="birthdayDatePicker" Grid.Row="2" Grid.Column="1" Margin="5"/>
-        <Label Content="Submited:" Grid.Row="3" Grid.Column="0" Margin="5"/>
-        <DatePicker Name="submitedDatePicker" Grid.Row="3" Grid.Column="1" Margin="5"/>
-        <CheckBox Name="isFlagged" Content="Flagged" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
-        <ComboBox Name="statusComboBox" Grid.Row="4" Grid.Column="1" Width="150" Margin="5"/>
-        <Button Content="Save" Grid.Row="5" Grid.Column="0" Width="100" Margin="30,5,5,5" IsDefault="True" Click="Save_Click"/>
-        <Button Content="Cancel" Grid.Row="5" Grid.Column="1" Width="100" Margin="5" IsCancel="True" Click="Cancel_Click"/>
-    </Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="User Name:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+            <TextBox Name="userNameBox" Grid.Row="0" Grid.Column="1" Width="150" HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <Label Content="User ID:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+            <TextBox Name="userIdBox" Grid.Row="1" Grid.Column="1" Width="150" HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <Label Content="Birthday:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+            <DatePicker Name="birthdayDatePicker" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
+            <Label Content="Submited:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+            <DatePicker Name="submitedDatePicker" Grid.Row="3" Grid.Column="1" HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <CheckBox Name="isFlagged" Content="Flagged" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <ComboBox Name="statusComboBox" Grid.Row="4" Grid.Column="1" Width="150" HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <Button Content="Save" Grid.Row="5" Grid.Column="0" Width="100" Margin="30,5,5,5" IsDefault="True" Click="Save_Click"/>
+            <Button Content="Cancel" Grid.Row="5" Grid.Column="1" Width="100" Margin="5" IsCancel="True" Click="Cancel_Click"/>
+        </Grid>
     </GroupBox>
 </Window>
