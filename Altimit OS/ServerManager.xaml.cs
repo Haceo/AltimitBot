@@ -112,6 +112,8 @@ namespace Altimit_OS
         //-----DOB----------------------------------
         private void DOBAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (_server.UserInfoList == null)
+                _server.UserInfoList = new List<UserInfo>();
             User ue = new User();
             ue.Owner = this;
             IsEnabled = false;
@@ -140,8 +142,6 @@ namespace Altimit_OS
                     newUser.Submitted = ue.submitedDatePicker.SelectedDate.Value;
                 else
                     newUser.Submitted = DateTime.Now;
-                if (_server.UserInfoList == null)
-                    _server.UserInfoList = new List<UserInfo>();
                 _server.UserInfoList.Add(newUser);
                 UpdateView("dob");
                 BotFrame.SaveFile("servers");
@@ -198,6 +198,8 @@ namespace Altimit_OS
         //-----Streamers----------------------------
         private void StreamersAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (_server.StreamerList == null)
+                _server.StreamerList = new List<Streamer>();
             StreamerEditor se = new StreamerEditor();
             se.Owner = this;
             se.Title = "New Streamer";
@@ -222,8 +224,6 @@ namespace Altimit_OS
                     AutoPost = se.autoPostCheckBox.IsChecked.Value,
                     TwitchName = se.twitchNameBox.Text
                 };
-                if (_server.StreamerList == null)
-                    _server.StreamerList = new List<Streamer>();
                 _server.StreamerList.Add(newStreamer);
                 UpdateView("streamer");
                 BotFrame.SaveFile("servers");
@@ -268,6 +268,8 @@ namespace Altimit_OS
         //-----Reaction Locks-----------------------
         private void ReactionLocksAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (_server.ReactionLockList == null)
+                _server.ReactionLockList = new List<ReactionLock>();
             ReactionLockEditor rl = new ReactionLockEditor();
             rl.Owner = this;
             rl.Title = "New Reaction Lock";
@@ -286,11 +288,10 @@ namespace Altimit_OS
                     ChannelId = ulong.Parse(rl.channelBox.Text),
                     MessageId = ulong.Parse(rl.messageBox.Text),
                     Emote = rl.emoteBox.Text,
-                    GiveRole = ulong.Parse(rl.giveRoleBox.Text),
-                    TakeRole = ulong.Parse(rl.takeRoleBox.Text)
+                    GiveRole = ulong.Parse(rl.giveRoleBox.Text)
                 };
-                if (_server.ReactionLockList == null)
-                    _server.ReactionLockList = new List<ReactionLock>();
+                if (rl.takeRoleBox.Text != "")
+                    newLock.TakeRole = ulong.Parse(rl.takeRoleBox.Text);
                 _server.ReactionLockList.Add(newLock);
                 UpdateView("reactionlock");
                 BotFrame.SaveFile("servers");
@@ -313,7 +314,8 @@ namespace Altimit_OS
                 rl._lock.MessageId = ulong.Parse(rl.messageBox.Text);
                 rl._lock.Emote = rl.emoteBox.Text;
                 rl._lock.GiveRole = ulong.Parse(rl.giveRoleBox.Text);
-                rl._lock.TakeRole = ulong.Parse(rl.takeRoleBox.Text);
+                if (rl.takeRoleBox.Text != "" || rl.takeRoleBox.Text != "0")
+                    rl._lock.TakeRole = ulong.Parse(rl.takeRoleBox.Text);
                 UpdateView("reactionlock");
                 BotFrame.SaveFile("servers");
             }
