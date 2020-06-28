@@ -97,6 +97,24 @@ namespace Altimit_OS.Modules
             await Context.Channel.DeleteMessageAsync(Context.Message);
             BotFrame.consoleOut($"{emote}");
         }
+        [Command("mystats", RunMode = RunMode.Async)]
+        public async Task MyStats()
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            ulong userid;
+            SocketGuildUser guildUser = Context.Guild.Users.FirstOrDefault(x => x.Id == Context.User.Id);
+            DateTimeOffset today = new DateTimeOffset(DateTime.Now);
+            string roleString = "";
+            foreach (SocketRole role in guildUser.Roles.Where(x => !x.IsEveryone))
+                roleString += $"{role.Mention}{Environment.NewLine}";
+            BotFrame.EmbedWriter(Context.Channel, Context.User,
+                "Altimit",
+                $"User {guildUser.Mention} Discord stats:{Environment.NewLine}" +
+                $"Time in server: {today.Subtract((DateTimeOffset)guildUser.JoinedAt).Days} days{Environment.NewLine}" +
+                $"Roles:{Environment.NewLine}" +
+                $"{roleString}");
+        }
 
         /*
 [Command("poll", RunMode = RunMode.Async)]
