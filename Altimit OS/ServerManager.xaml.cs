@@ -209,9 +209,15 @@ namespace Altimit_OS
             IsEnabled = true;
             if (se.DialogResult.HasValue && se.DialogResult.Value)
             {
-                if (_server.StreamerList.FirstOrDefault(x => x.DiscordId == ulong.Parse(se.discordIdBox.Text) || x.TwitchName == se.twitchNameBox.Text) != null)
+                if (_server.StreamerList.FirstOrDefault(x => x.DiscordId == ulong.Parse(se.discordIdBox.Text)) != null)
                 {
-                    MessageBox.Show("You are trying to add a user that already has an entry, please select the user entry and edit it instead!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var res = MessageBox.Show("You are trying to add a user that already has an entry, are you trying to add a second channel for the user?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (res == MessageBoxResult.No)
+                        return;
+                }
+                if (_server.StreamerList.FirstOrDefault(x => x.TwitchName == se.twitchNameBox.Text) != null)
+                {
+                    MessageBox.Show("You cannot add multiples of the same channel!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 Streamer newStreamer = new Streamer()

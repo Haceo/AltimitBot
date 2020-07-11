@@ -103,10 +103,11 @@ namespace Altimit_OS
         {
             var server = _main.ServerList.FirstOrDefault(x => x.ServerId == u.Guild.Id);
             var chan = u.Guild.Channels.FirstOrDefault(x => x.Id == server.WelcomeChannel) as ISocketMessageChannel;
-            var streamer = server.StreamerList.FirstOrDefault(x => x.DiscordId == u.Id);
+            var streamer = server.StreamerList.Where(x => x.DiscordId == u.Id);
             if (streamer != null)
             {
-                server.StreamerList.Remove(streamer);
+                foreach (var stream in streamer)
+                    server.StreamerList.Remove(stream);
                 BotFrame.SaveFile("servers");
             }
             if (server.WelcomeChannel != 0 && server.UseWelcomeForLeave)

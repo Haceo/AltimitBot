@@ -363,5 +363,33 @@ namespace Altimit_OS.Modules
             else
                 return context.Guild.Roles.FirstOrDefault(x => x.Name.ToLower() == role.ToLower());
         }
+        [Command("blank", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.KickMembers)]
+        public async Task FindBlanks(int length = 0)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            string userOut = "";
+            foreach (var user in Context.Guild.Users.Where(x => x.Username.Length <= length))
+                userOut = $"{user.Mention} - {user} - {user.Id}{Environment.NewLine}";
+            if (userOut != "" && userOut.Length < 2056)
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"Users found with names {length} chars or less:{Environment.NewLine}" +
+                    $"{userOut}", time: -1);
+            else if (userOut != "" && userOut.Length > 2056)
+            {
+                File.WriteAllText("BlankUsers.txt", userOut);
+                BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"Sorry list was to long, outputting as file instead...");
+                await Context.Channel.SendFileAsync("BlankUsers.txt");
+                File.Delete("BlankUsers.txt");
+            }
+            else
+                await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                    "Altimit Admin",
+                    $"Sorry no users found with names {length} chars or less...");
+        }
     }
 }

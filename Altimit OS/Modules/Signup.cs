@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace Altimit_OS.Modules
                     {
                         BotFrame.EmbedWriter(Context.Channel, Context.User,
                             "Altimit Streaming",
-                            $"Sorry but Altimit OS is already watching your stream", time: -1);
+                            $"Sorry but Altimit OS is already watching your stream!{Environment.NewLine}To add a second channel please contact an Admin!", time: -1);
                         return;
                     }
                     Streamer newStreamer = new Streamer()

@@ -131,7 +131,7 @@ namespace Altimit_OS
         {
             var url = stream.Channel.Url;
             var embed = new EmbedBuilder();
-            embed.WithAuthor(new EmbedAuthorBuilder() { Name = $"{user.Username} is streaming on Twitch!", IconUrl = user.GetAvatarUrl(), Url = url });
+            embed.WithAuthor(new EmbedAuthorBuilder() { Name = $"{user.Username} is streaming on Twitch @ {stream.Channel.Name}!", IconUrl = user.GetAvatarUrl(), Url = url });
             embed.WithTitle(stream.Channel.Status);
             embed.WithUrl(url);
             embed.WithColor(new Color(100, 65, 165));
