@@ -59,6 +59,7 @@ namespace Altimit_OS
             CommandHandler._main = this;
             Modules.Audio._main = this;
             Modules.Admin._main = this;
+            Modules.DateOfBirth._main = this;
             Modules.Misc._main = this;
             Modules.Signup._main = this;
             BotFrame.LoadFile("config");
@@ -300,13 +301,12 @@ namespace Altimit_OS
         public async Task StreamerHandler(DiscordServer server)
         {
             server.StreamerCheckElapsed = 0;
+            var guild = _client.Guilds.FirstOrDefault(x => x.Id == server.ServerId);
+            var streamRole = guild.Roles.FirstOrDefault(x => x.Id == server.StreamingRole);
+            var channel = guild.Channels.FirstOrDefault(x => x.Id == server.StreamPostChannel) as ISocketMessageChannel;
             foreach (var streamer in server.StreamerList)
             {
-                var guild = _client.Guilds.FirstOrDefault(x => x.Id == server.ServerId);
-                var streamRole = guild.Roles.FirstOrDefault(x => x.Id == server.StreamingRole);
-                var channel = guild.Channels.FirstOrDefault(x => x.Id == server.StreamPostChannel) as ISocketMessageChannel;
                 var user = guild.Users.FirstOrDefault(x => x.Id == streamer.DiscordId);
-
                 var stream = await _api.V5.Streams.GetStreamByUserAsync((await _api.V5.Users.GetUserByNameAsync(streamer.TwitchName)).Matches[0].Id);
                 if (stream.Stream == null)//not streaming
                 {

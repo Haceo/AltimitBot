@@ -191,6 +191,7 @@ namespace Altimit_OS
         public ulong AdminRole { get; set; }
         public ulong NewUserRole { get; set; }
         public ulong MemberRole { get; set; }
+        public ulong UnderageRole { get; set; }
         public PrefixChar Prefix { get; set; }
         public string ServerJoined { get; set; }
         public List<UserInfo> UserInfoList { get; set; }

@@ -28,6 +28,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <ListView Name="dobListBox" Grid.Row="0" Grid.ColumnSpan="99" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="3" ItemsSource="{Binding UserList}">
                         <ListView.View>
@@ -45,11 +46,13 @@
                     <TextBox Name="newUserRoleIdBox" Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
                     <Label Content="Member Role ID:" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBox Name="memberRoleIdBox" Grid.Row="1" Grid.Column="3" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
-                    <Label Content="Admin Log Channel:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="5"/>
-                    <TextBox Name="adminLogChanBox" Grid.Row="2" Grid.Column="0" Width="180" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Margin="75,5,5,5" Height="18"/>
-                    <Button Content="Add" Grid.Row="2" Grid.Column="1" Width="100" Grid.ColumnSpan="2" Margin="100,5,5,5" Click="DOBAdd_Click"/>
-                    <Button Content="Edit" Grid.Row="2" Grid.Column="2" Width="100" Grid.ColumnSpan="2" Margin="5,5,50,5" Click="DOBEdit_Click"/>
-                    <Button Content="Remove" Grid.Row="2" Grid.Column="3" Width="100" Margin="5" Click="DOBRemove_Click"/>
+                    <Label Content="Underage Role ID:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Name="underageRoleIdBox" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
+                    <Label Content="Admin Log Channel:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="5"/>
+                    <TextBox Name="adminLogChanBox" Grid.Row="3" Grid.Column="0" Width="180" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Margin="75,5,5,5" Height="18"/>
+                    <Button Content="Add" Grid.Row="3" Grid.Column="1" Width="100" Grid.ColumnSpan="2" Margin="100,5,5,5" Click="DOBAdd_Click"/>
+                    <Button Content="Edit" Grid.Row="3" Grid.Column="2" Width="100" Grid.ColumnSpan="2" Margin="5,5,50,5" Click="DOBEdit_Click"/>
+                    <Button Content="Remove" Grid.Row="3" Grid.Column="3" Width="100" Margin="5" Click="DOBRemove_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Streamers">
