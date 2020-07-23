@@ -186,6 +186,7 @@
     <Compile Include="Modules\Admin.cs" />
     <Compile Include="Modules\Audio.cs" />
     <Compile Include="Modules\DateOfBirth.cs" />
+    <Compile Include="Modules\Giveaway.cs" />
     <Compile Include="Modules\Misc.cs" />
     <Compile Include="Modules\Signup.cs" />
     <Compile Include="ReactionLockEditor.xaml.cs">

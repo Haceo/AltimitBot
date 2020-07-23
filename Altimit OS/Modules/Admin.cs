@@ -391,5 +391,13 @@ namespace Altimit_OS.Modules
                     "Altimit Admin",
                     $"Sorry no users found with names {length} chars or less...");
         }
+        [Command("emoteid", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
+        public async Task GetEmoteId(string emote)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            BotFrame.consoleOut($"{emote}");
+        }
     }
 }
