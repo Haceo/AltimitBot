@@ -296,6 +296,7 @@ namespace Altimit_OS.Modules
                 "Altimit Admin",
                 $"User {guildUser.Mention} found!{Environment.NewLine}" +
                 $"Discord stats:{Environment.NewLine}" +
+                $"Discord acc Date: {guildUser.CreatedAt}" +
                 $"Time in server: {today.Subtract((DateTimeOffset)guildUser.JoinedAt).Days} days{Environment.NewLine}" +
                 $"Roles:{Environment.NewLine}" +
                 $"{roleString}", time: time);
