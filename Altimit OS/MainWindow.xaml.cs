@@ -78,7 +78,7 @@ namespace Altimit_OS
             foreach (var server in ServerList)
             {
                 server.StreamerCheckElapsed += 0.5;
-                if (server.StreamerCheckInterval <= server.StreamerCheckElapsed)
+                if (server.StreamerCheckElapsed >= server.StreamerCheckInterval)
                     StreamerHandler(server);
             }
         }
@@ -243,7 +243,7 @@ namespace Altimit_OS
             await ServerCheck();
             connectionButton.Content = "Connected!";
             serverTab.Visibility = Visibility.Visible;
-            _timer.Enabled = true;
+            _timer.Start();
             await Task.Delay(-1);
         }
         private async Task Disconnect()
@@ -323,6 +323,7 @@ namespace Altimit_OS
                 if (!streamer.Streaming)//not marked
                 {
                     streamer.Streaming = true;
+                    BotFrame.consoleOut($"{streamer.DiscordName} is now marked streaming in server: {guild.Name}");
                     if (server.StreamingRole != 0 && streamer.GiveRole && !user.Roles.Contains(streamRole))
                         await user.AddRoleAsync(streamRole);
                 }

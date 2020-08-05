@@ -93,7 +93,7 @@ namespace Altimit_OS
                 timeNow = DateTime.Now.ToString() + ": ";
             _main.ConsoleString = timeNow + "I was just cleared!" + Environment.NewLine;
         }
-        public static async Task<ulong> EmbedWriter(ISocketMessageChannel chan, IUser user, string title, string data, bool pinned = false, bool image = true, bool direct = false, int time = 30000)
+        public static async Task<ulong> EmbedWriter(ISocketMessageChannel chan, IUser user, string title, string data, bool pinned = false, bool image = true, bool direct = false, int time = 30000, string mentions = "")
         {
             var embed = new EmbedBuilder();
             embed.WithTitle(title);
@@ -106,7 +106,7 @@ namespace Altimit_OS
             var embedded = embed.Build();
             if (time == -1 && !direct)
             {
-                var msg = await chan.SendMessageAsync("", false, embedded);
+                var msg = await chan.SendMessageAsync(mentions, false, embedded);
                 if (pinned)
                     await msg.PinAsync();
                 return msg.Id;
@@ -115,14 +115,14 @@ namespace Altimit_OS
             {
                 if (!direct)
                 {
-                    var msg = await chan.SendMessageAsync("", false, embedded);
+                    var msg = await chan.SendMessageAsync(mentions, false, embedded);
                     await Task.Delay(time);
                     await chan.DeleteMessageAsync(msg);
                     return msg.Id;
                 }
                 else
                 {
-                    var msg = await user.SendMessageAsync("", false, embedded);
+                    var msg = await user.SendMessageAsync(mentions, false, embedded);
                     return msg.Id;
                 }
             }

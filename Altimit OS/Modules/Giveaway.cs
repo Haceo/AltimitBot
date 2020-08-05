@@ -69,15 +69,17 @@ namespace Altimit_OS.Modules
                 return;
             }
             Random r = new Random();
+            string mentionsOut = "";
             for (int i = 0; i < winners; i++)
             {
                 var ran = r.Next(0, entries.Count);
-                outString += $"{i + 1}: {entries[ran]}{Environment.NewLine}";
+                outString += $"{i + 1}: {entries[ran].Mention}{Environment.NewLine}";
+                mentionsOut += $"{entries[ran].Mention} ";
                 entries.RemoveAt(ran);
             }
             await BotFrame.EmbedWriter(Context.Channel, Context.User,
                 "Altimit Giveaway",
-                $"Winners are: {Environment.NewLine}{outString}", time: -1);
+                $"Winners are: {Environment.NewLine}{outString}", time: -1, mentions: mentionsOut);
         }
         private async Task<SocketRole> ParseRole(SocketCommandContext context, string role)
         {
