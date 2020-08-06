@@ -9,7 +9,7 @@ using Discord.WebSocket;
 
 namespace Altimit_OS.Modules
 {
-    class Giveaway : ModuleBase<SocketCommandContext>
+    public class Giveaway : ModuleBase<SocketCommandContext>
     {
         public MainWindow _main;
         [Command("giveaway", RunMode = RunMode.Async)]
