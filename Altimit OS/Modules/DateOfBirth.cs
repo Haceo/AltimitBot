@@ -111,7 +111,7 @@ namespace Altimit_OS.Modules
                         OutwardReason +
                         "Admins have been notified and will handle your situation as soon as possible.",
                         image: false, direct: true);
-                    if (user.Status == UserStatus.Underage)
+                    if (user.Status == UserStatus.Underage && birthday == user.Birthday)
                     {
                         if (server.NewUserRole != 0)
                             await guildUser.RemoveRoleAsync(newUserRole);
