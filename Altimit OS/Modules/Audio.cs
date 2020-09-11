@@ -18,6 +18,52 @@ namespace Altimit_OS.Modules
         IAudioClient _audioClient;
         public static MainWindow _main;
         //-----Commands----------------------------------------------------------------------------------------------------
+        [Command("serve", RunMode = RunMode.Async)]
+        public async Task Serve([Remainder] string url)
+        {
+            await Task.Delay(200);
+            await Context.Channel.DeleteMessageAsync(Context.Message);
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == Context.Guild.Id);
+            if (url.ToLower().Contains("youtube.com"))
+            {
+                try
+                {
+                    BotFrame.consoleOut($"{Context.User} GET {url}");
+                    ulong msg = await BotFrame.EmbedWriter(Context.Channel, Context.User, "Altimit DL", $"Please wait while I get {url}...", time: -1);
+                    Tuple<string, string> info = await YoutubeInfo(url);
+                    string[] time = info.Item2.Split(':');
+                    int min = 0;
+                    int sec = 0;
+                    if (time.Length == 3)
+                    {
+                        min = (int.Parse(time[0]) * 60) + int.Parse(time[1]);
+                        sec = int.Parse(time[2]);
+                    }
+                    else if (time.Length == 2)
+                    {
+                        min = int.Parse(time[0]);
+                        sec = int.Parse(time[1]);
+                    }
+                    if (sec > 30)
+                        min++;
+                    if (min > 10)
+                    {
+                        await Context.Channel.DeleteMessageAsync(msg);
+                        await BotFrame.EmbedWriter(Context.Channel, Context.User,
+                            "Altimit DL",
+                            $"Song must be under 10 minutes long!{Environment.NewLine}" +
+                            $"Length: {info.Item2}");
+                        return;
+                    }
+                    string file = await YoutubeDL(url);
+
+                }
+                catch (Exception ex)
+                {
+                    BotFrame.consoleOut($"ERROR {ex.Message}");
+                }
+            }
+        }
         [Command("add", RunMode = RunMode.Async)]
         public async Task AddTrack(string url)
         {

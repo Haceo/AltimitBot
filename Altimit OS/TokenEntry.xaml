@@ -12,6 +12,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -24,8 +25,8 @@
             <TextBox Name="twitchTokenBox" Grid.Row="1"  Grid.Column="1" Width="150" Margin="10"/>
             <Label Content="Twitch Client ID:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
             <TextBox Name="twitchClientIdBox" Grid.Row="2" Grid.Column="1" Width="150" Margin="10"/>
-            <Button Content="Save" Grid.Row="3" Grid.Column="0" Width="100" Margin="10" Click="Save_Click"/>
-            <Button Content="Cancel" Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="Cancel_Click"/>
+            <Button Content="Save" Grid.Row="99" Grid.Column="0" Width="100" Margin="10" Click="Save_Click"/>
+            <Button Content="Cancel" Grid.Row="99" Grid.Column="1" Width="100" Margin="10" Click="Cancel_Click"/>
         </Grid>
     </GroupBox>
 </Window>
