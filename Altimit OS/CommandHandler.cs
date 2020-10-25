@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -24,8 +25,11 @@ namespace Altimit_OS
             _client.ReactionAdded += ReactionAddedHandler;
             _client.MessageReceived += MessageReceivedHandler;
             _client.UserBanned += UserBannedHandler;
+            _client.UserUnbanned += UserUnbannedHandler;
             _client.UserUpdated += UserUpdatedHandler;
         }
+
+
         private async Task JoinedGuildHandler(SocketGuild guild)
         {
             DiscordServer saved = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
@@ -125,6 +129,7 @@ namespace Altimit_OS
             if (userInfo != null)
             {
                 userInfo.Flagged = true;
+                userInfo.SavedStatus = userInfo.Status;
                 userInfo.Status = UserStatus.Banned;
                 BotFrame.SaveFile("servers");
             }
@@ -143,6 +148,31 @@ namespace Altimit_OS
                 $"User {user.Mention} has been banned{Environment.NewLine}" +
                 $"Reason:{Environment.NewLine}" +
                 $"{ban.Reason}", time: -1);
+        }
+        private async Task UserUnbannedHandler(SocketUser user, SocketGuild guild)
+        {
+            var server = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
+
+            var userInfo = server.UserInfoList.FirstOrDefault(x => x.UserId == user.Id);
+            if (userInfo != null)
+            {
+                userInfo.Flagged = false;
+                userInfo.Status = userInfo.SavedStatus;
+                userInfo.SavedStatus = UserStatus.NA;
+                BotFrame.SaveFile("servers");
+            }
+
+            var blacklistChannel = guild.Channels.FirstOrDefault(x => x.Id == server.BlacklistChannel) as ISocketMessageChannel;
+            if (blacklistChannel == null && server.UseBlacklist)
+            {
+                BotFrame.consoleOut("No blacklist channel set up");
+                return;
+            }
+            else if (!server.UseBlacklist)
+                return;
+            BotFrame.EmbedWriter(blacklistChannel, user,
+                "Altimit Blacklist",
+                $"User {user.Mention} has had their ban lifted!", time: -1);
         }
         private async Task ReactionAddedHandler(Cacheable<IUserMessage, ulong> userMessage, ISocketMessageChannel messageChannel, SocketReaction reaction)
         {

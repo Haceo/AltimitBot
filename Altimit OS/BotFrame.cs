@@ -231,6 +231,7 @@ namespace Altimit_OS
         public DateTime Submitted { get; set; }
         public bool Flagged { get; set; }
         public UserStatus Status { get; set; }
+        public UserStatus SavedStatus { get; set; }
     }
     public class OldUserInfo
     {
