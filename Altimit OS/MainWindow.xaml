@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Altimit_OS"
         mc:Ignorable="d"
-        Title="Altimit" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Altimit" Height="450" Width="800" ResizeMode="CanMinimize">
     <Grid>
         <TabControl>
             <TabItem Header="Console">
