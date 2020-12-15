@@ -71,6 +71,7 @@ namespace Altimit_OS
             newUserRoleIdBox.Text = _server.NewUserRole.ToString();
             memberRoleIdBox.Text = _server.MemberRole.ToString();
             underageRoleIdBox.Text = _server.UnderageRole.ToString();
+            birthdayChannelBox.Text = _server.BirthdayChannel.ToString();
             adminLogChanBox.Text = _server.AdminChannel.ToString();
             //-----Streamers----------------------------------
             if (_server.StreamerList != null)
@@ -382,6 +383,10 @@ namespace Altimit_OS
                 _server.UnderageRole = underageRole;
             else
                 _server.UnderageRole = 0;
+            if (ulong.TryParse(birthdayChannelBox.Text, out ulong birthdayChannel))
+                _server.BirthdayChannel = birthdayChannel;
+            else
+                _server.BirthdayChannel = 0;
             if (ulong.TryParse(adminLogChanBox.Text, out ulong adminChan))
                 _server.AdminChannel = adminChan;
             else

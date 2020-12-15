@@ -48,6 +48,8 @@
                     <TextBox Name="memberRoleIdBox" Grid.Row="1" Grid.Column="3" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
                     <Label Content="Underage Role ID:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBox Name="underageRoleIdBox" Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
+                    <Label Content="Birthday Channel:" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Name="birthdayChannelBox" Grid.Row="2" Grid.Column="3" HorizontalContentAlignment="Center" Margin="5" Width="180"/>
                     <Label Content="Admin Log Channel:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="5"/>
                     <TextBox Name="adminLogChanBox" Grid.Row="3" Grid.Column="0" Width="180" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Margin="75,5,5,5" Height="18"/>
                     <Button Content="Add" Grid.Row="3" Grid.Column="1" Width="100" Grid.ColumnSpan="2" Margin="100,5,5,5" Click="DOBAdd_Click"/>

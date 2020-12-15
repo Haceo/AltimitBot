@@ -224,5 +224,28 @@ namespace Altimit_OS.Modules
             server.UserInfoList.Add(newUser);
             BotFrame.SaveFile("servers");
         }
+
+        public static async Task Birthday(DiscordServer server, DiscordSocketClient _client)
+        {
+            if (server.BirthdayChannel != 0)
+            {
+                SocketGuild guild = _client.Guilds.FirstOrDefault(x => x.Id == server.ServerId);
+                ISocketMessageChannel channel = guild.Channels.FirstOrDefault(x => x.Id == server.BirthdayChannel) as ISocketMessageChannel;
+                SocketRole adminRole = guild.Roles.FirstOrDefault(x => x.Id == server.AdminRole);
+                string birthdayList = "";
+                foreach (UserInfo user in server.UserInfoList.Where(x => x.Birthday.Month == DateTime.Now.Month && x.Birthday.Day == DateTime.Now.Day
+                && x.Status != UserStatus.Banned && x.Status != UserStatus.NA))
+                {
+                    SocketGuildUser socketUser = guild.Users.FirstOrDefault(x => x.Id == user.UserId);
+                    if (socketUser == null)
+                        continue;
+                    birthdayList += $"{socketUser.Mention} : {socketUser.Username} is {DateTime.Now.Year - user.Birthday.Year} years old today!{Environment.NewLine}";
+                }
+                BotFrame.EmbedWriter(channel, _client.CurrentUser,
+                    "Altimit Birthday!!",
+                    $"Happy Birthday!{Environment.NewLine}" +
+                    $"{birthdayList}", time: -1, mentions: adminRole.Mention);
+            }
+        }
     }
 }

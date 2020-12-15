@@ -24,6 +24,7 @@ namespace Altimit_OS
         static CommandHandler _handler;
         public static TwitchAPI _api;
         public Timer _timer = new Timer(30000);
+        public Timer _dailytimer = new Timer(3600000);
         public bool loading = false;
         public List<AudioContainer> AudioInfo = new List<AudioContainer>();
         public event PropertyChangedEventHandler PropertyChanged;
@@ -72,7 +73,16 @@ namespace Altimit_OS
                 ServerList = new ObservableCollection<DiscordServer>();
             _api = new TwitchAPI();
             _timer.Elapsed += StreamerCheck_Elapsed;
+            _dailytimer.Elapsed += _dailytimer_Elapsed;
         }
+
+        private void _dailytimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (DateTime.Now.Hour == 3)
+                foreach (var server in ServerList)
+                    Modules.DateOfBirth.Birthday(server, _client);
+        }
+
         private void StreamerCheck_Elapsed(object sender, ElapsedEventArgs e)
         {
             foreach (var server in ServerList)
