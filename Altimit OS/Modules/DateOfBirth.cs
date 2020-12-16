@@ -183,10 +183,11 @@ namespace Altimit_OS.Modules
                     $"You have entered a date that shows you are under 18!{Environment.NewLine}" +
                     $"Admins have been notified!",
                     image: false, direct: true);
+                var age = DateTime.Now - newUser.Birthday;
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit DOB",
                     $"{adminRole.Mention} User is under 18!{Environment.NewLine}" +
-                    $"Username: {newUser.UserName}{Environment.NewLine}" +
+                    $"Username: {newUser.UserName} Age: {age}{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
                     $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
                     $"Submited: {newUser.Submitted}{Environment.NewLine}" +
