@@ -178,16 +178,22 @@ namespace Altimit_OS.Modules
                 //underage
                 newUser.Flagged = true;
                 newUser.Status = UserStatus.Underage;
+                string allowUnderage = "";
+                if (server.UnderageRole != 0)
+                    allowUnderage = $"Note: This server allows users under 18, you can ignore this message.{Environment.NewLine}";
                 await BotFrame.EmbedWriter(context.Channel, context.User,
                     "Altimit DOB",
                     $"You have entered a date that shows you are under 18!{Environment.NewLine}" +
+                    $"{allowUnderage}" +
                     $"Admins have been notified!",
                     image: false, direct: true);
-                var age = DateTime.Now - newUser.Birthday;
+                int ageYear = today.Year - newUser.Birthday.Year;
+                int ageMonth = today.Month - newUser.Birthday.Month;
+                int ageDay = today.Day - newUser.Birthday.Day;
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit DOB",
                     $"{adminRole.Mention} User is under 18!{Environment.NewLine}" +
-                    $"Username: {newUser.UserName} Age: {age}{Environment.NewLine}" +
+                    $"Username: {newUser.UserName} Age: {ageYear} years, {ageMonth} months, {ageDay} days{Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
                     $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
                     $"Submited: {newUser.Submitted}{Environment.NewLine}" +
