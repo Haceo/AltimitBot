@@ -15,16 +15,16 @@ namespace Altimit_OS.Modules
             SocketGuild guild;
             guild = Context.Client.Guilds.FirstOrDefault(x => x.Id == serverId);
             DiscordServer server = _main.ServerList.FirstOrDefault(x => x.ServerId == guild.Id);
+            if (server.DOBChannel != 0)
+                await guild.Channels.FirstOrDefault(x => x.Id == server.DOBChannel).DeleteAsync();
+            if (server.MemberRole != 0)
+                await guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole).DeleteAsync();
+            if (server.UnderageRole != 0)
+                await guild.Roles.FirstOrDefault(x => x.Id == server.UnderageRole).DeleteAsync();
+            if (server.NewUserRole != 0)
+                await guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole).DeleteAsync();
             if (full)
             {
-                if (server.DOBChannel != 0)
-                    await guild.Channels.FirstOrDefault(x => x.Id == server.DOBChannel).DeleteAsync();
-                if (server.MemberRole != 0)
-                    await guild.Roles.FirstOrDefault(x => x.Id == server.MemberRole).DeleteAsync();
-                if (server.UnderageRole != 0)
-                    await guild.Roles.FirstOrDefault(x => x.Id == server.UnderageRole).DeleteAsync();
-                if (server.NewUserRole != 0)
-                    await guild.Roles.FirstOrDefault(x => x.Id == server.NewUserRole).DeleteAsync();
                 if (server.StreamingRole != 0)
                     await guild.Roles.FirstOrDefault(x => x.Id == server.StreamingRole).DeleteAsync();
                 await guild.LeaveAsync();
