@@ -63,6 +63,7 @@ namespace Altimit_OS
             Modules.DateOfBirth._main = this;
             Modules.Misc._main = this;
             Modules.Signup._main = this;
+            Modules.Owner._main = this;
             BotFrame.LoadFile("config");
             BotFrame.LoadFile("servers");
             if (BotFrame.config == null)

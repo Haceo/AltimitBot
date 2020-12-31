@@ -188,6 +188,7 @@
     <Compile Include="Modules\DateOfBirth.cs" />
     <Compile Include="Modules\Giveaway.cs" />
     <Compile Include="Modules\Misc.cs" />
+    <Compile Include="Modules\Owner.cs" />
     <Compile Include="Modules\Signup.cs" />
     <Compile Include="ReactionLockEditor.xaml.cs">
       <DependentUpon>ReactionLockEditor.xaml</DependentUpon>
