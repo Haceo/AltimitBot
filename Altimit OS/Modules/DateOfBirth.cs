@@ -193,7 +193,8 @@ namespace Altimit_OS.Modules
                 await BotFrame.EmbedWriter(adminChan, context.User,
                     "Altimit DOB",
                     $"{adminRole.Mention} User is under 18!{Environment.NewLine}" +
-                    $"Username: {newUser.UserName} Age: {ageYear} years, {ageMonth} months, {ageDay} days{Environment.NewLine}" +
+                    $"Age: {ageYear} years, {ageMonth} months, {ageDay} days{Environment.NewLine}" +
+                    $"Username: {newUser.UserName} {Environment.NewLine}" +
                     $"User ID: {newUser.UserId}{Environment.NewLine}" +
                     $"Birthday: {newUser.Birthday}{Environment.NewLine}" +
                     $"Submited: {newUser.Submitted}{Environment.NewLine}" +

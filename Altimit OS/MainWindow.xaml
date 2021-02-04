@@ -67,7 +67,13 @@
                         </Button.ContextMenu>
                     </Button>
                     <Button Content="Save" Grid.Row="2" Grid.Column="1" Width="75" Click="ServerSave_Click"/>
-                    <Button Content="Manage" Grid.Row="3" Grid.Column="1" Width="75" Click="ServerManage_Click"/>
+                    <Button Content="Manage" Grid.Row="3" Grid.Column="1" Width="75" Click="ServerManage_Click">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Remove" Click="ServerRemove_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -223,6 +223,23 @@ namespace Altimit_OS
             Visibility = Visibility.Visible;
             sm = null;
         }
+        private void ServerRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if (_client == null || serverListBox.SelectedIndex == -1)
+                return;
+            DiscordServer server = ServerList[serverListBox.SelectedIndex];
+            if (!server.Active)
+            {
+                ServerList.Remove(server);
+                BotFrame.consoleOut($"Removed all data associated with {server.ServerName} - {server.ServerId}");
+                BotFrame.SaveFile("servers");
+            }
+            else
+            {
+                MessageBox.Show(this, "Please leave the server before you try to remove it!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
         //-----Connection----
         private async Task Connect()
         {
