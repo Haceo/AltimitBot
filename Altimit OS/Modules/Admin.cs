@@ -75,7 +75,7 @@ namespace Altimit_OS.Modules
                 $"User(s) found using info type {searchBy}: {info}:{Environment.NewLine}{outputString}",
                 time: time);
         }
-
+        //Add edit mode.?
         [Command("clean", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.ManageMessages)]
         public async Task ClearMessages(int count, ulong userId = 0, ITextChannel chan = null)
