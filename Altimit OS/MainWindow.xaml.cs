@@ -230,9 +230,14 @@ namespace Altimit_OS
             DiscordServer server = ServerList[serverListBox.SelectedIndex];
             if (!server.Active)
             {
-                ServerList.Remove(server);
-                BotFrame.consoleOut($"Removed all data associated with {server.ServerName} - {server.ServerId}");
-                BotFrame.SaveFile("servers");
+                if (MessageBox.Show($"Are you sure you want to remove {server.ServerName} - {server.ServerId}?", "Confirm!", MessageBoxButton.YesNo, MessageBoxImage.Question, defaultResult: MessageBoxResult.No) == MessageBoxResult.Yes)
+                {
+                    ServerList.Remove(server);
+                    BotFrame.consoleOut($"Removed all data associated with {server.ServerName} - {server.ServerId}");
+                    BotFrame.SaveFile("servers");
+                }
+                else
+                    return;
             }
             else
             {
