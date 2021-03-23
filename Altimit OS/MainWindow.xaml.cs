@@ -354,6 +354,8 @@ namespace Altimit_OS
         public async Task StreamerHandler(DiscordServer server)
         {
             server.StreamerCheckElapsed = 0;
+            if (!server.StreamEnable)
+                return;
             var guild = _client.Guilds.FirstOrDefault(x => x.Id == server.ServerId);
             var streamRole = guild.Roles.FirstOrDefault(x => x.Id == server.StreamingRole);
             var channel = guild.Channels.FirstOrDefault(x => x.Id == server.StreamPostChannel) as ISocketMessageChannel;

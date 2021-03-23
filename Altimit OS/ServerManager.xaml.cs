@@ -106,6 +106,7 @@ namespace Altimit_OS
             intervalSlider.Value = _server.StreamerCheckInterval;
             streamPostChannelBox.Text = _server.StreamPostChannel.ToString();
             streamerRoleBox.Text = _server.StreamingRole.ToString();
+            streamEnableCheckBox.IsChecked = _server.StreamEnable;
         }
         protected void RaisePropertyChanged(string propertyName)
         {
@@ -159,11 +160,18 @@ namespace Altimit_OS
             var user = _client.Guilds.FirstOrDefault(x => x.Id == _server.ServerId).Users.FirstOrDefault(y => y.Id == ue._user.UserId);
             if (_client.ConnectionState == Discord.ConnectionState.Connected && user != null)
             {
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.UriSource = new Uri(user.GetAvatarUrl());
-                bi.EndInit();
-                ue.Icon = bi;
+                try
+                {
+                    var bi = new BitmapImage();
+                    bi.BeginInit();
+                    bi.UriSource = new Uri(user.GetAvatarUrl());
+                    bi.EndInit();
+                    ue.Icon = bi;
+                }
+                catch (Exception ex)
+                {
+                    BotFrame.consoleOut(ex.Message);
+                }
             }
             ue.Title = ue._user.UserName + " : " + ue._user.UserId;
             IsEnabled = false;
@@ -439,6 +447,7 @@ namespace Altimit_OS
                 _server.StreamingRole = streamerRole;
             else
                 _server.StreamingRole = 0;
+            _server.StreamEnable = streamEnableCheckBox.IsChecked.Value;
             BotFrame.SaveFile("servers");
         }
         private void Close_Click(object sender, RoutedEventArgs e)

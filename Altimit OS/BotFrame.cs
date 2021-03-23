@@ -207,6 +207,7 @@ namespace Altimit_OS
         public ulong StreamingRole { get; set; }
         public double StreamerCheckInterval { get; set; }
         public double StreamerCheckElapsed { get; set; }
+        public bool StreamEnable { get; set; }
         public bool OwO { get; set; }
     }
     public class Song

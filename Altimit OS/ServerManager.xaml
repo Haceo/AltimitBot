@@ -191,6 +191,7 @@
                         <Label Content="Streamer Check Interval:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
                         <Slider x:Name="intervalSlider" Minimum="1" Maximum="60" IsSnapToTickEnabled="True" TickFrequency="0.5" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="5"/>
                         <TextBox Grid.Row="4" Grid.Column="2" Width="75" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5" Text="{Binding ElementName=intervalSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+                        <CheckBox Name="streamEnableCheckBox" Content="Enable stream check" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
 
                         <Label Content="Stream Post Channel:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
                         <TextBox Name="streamPostChannelBox" Grid.Row="5" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="5"/>
