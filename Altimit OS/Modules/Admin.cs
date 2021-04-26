@@ -192,7 +192,7 @@ namespace Altimit_OS.Modules
                         if (parseRole == null)
                         {
                             outRole = role.Trim();
-                            outCount = $"No role found mathcing this name or ID!";
+                            outCount = $"No role found matching this name or ID!";
                         }
                         else
                         {
